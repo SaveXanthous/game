@@ -1,6 +1,8 @@
 import pygame
 import pygame_gui
 
+from event_manager import EventManager
+
 class GameManager:
 
     isInit = False
@@ -9,6 +11,16 @@ class GameManager:
     def init(cls):
         cls.isInit = True
 
+        cls.__init_pygame()
+        cls.__init_pygame_gui()
+        cls.__init_events()
+
+    @classmethod
+    def __init_events(cls):
+        EventManager.init(GameManager = cls)
+
+    @classmethod
+    def __init_pygame(cls):
         pygame.init()
 
         cls.running = True
@@ -17,10 +29,8 @@ class GameManager:
         cls.screen = pygame.display.set_mode((cls.WIDTH, cls.HEIGHT))
         cls.clock = pygame.time.Clock()
 
-        cls.initPygameGUI()
-
     @classmethod
-    def initPygameGUI(cls):
+    def __init_pygame_gui(cls):
         cls.manager = pygame_gui.UIManager((cls.WIDTH, cls.HEIGHT))
 
     @classmethod
@@ -31,7 +41,7 @@ class GameManager:
         while cls.running:
             time_delta = cls.clock.tick(60) / 1000.0
 
-            cls.events()
+            cls.process_events()
 
             cls.manager.update(time_delta)
 
@@ -47,10 +57,14 @@ class GameManager:
         cls.running = False
 
     @classmethod
-    def events(cls):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                cls.stop()
+    def process_events(cls):
+        for system_event in pygame.event.get():
+            cls.manager.process_events(system_event)
 
-            cls.manager.process_events(event)
+            for handler_event in EventManager.get_events(system_event):
+                handler_event.process(system_event)
+
+    @classmethod
+    def get_ui_manager(cls):
+        return cls.manager
 
