@@ -1,15 +1,17 @@
 from abc import ABC, abstractmethod
 
 class BaseEvents(ABC):
-    @classmethod
-    def init(cls, GameManager):
-        cls.set_GameManager(GameManager)
+    def __init__(self, game_manager):
+        self._game_manager = game_manager
 
-    @classmethod
-    def set_GameManager(cls, GameManager):
-        cls._GameManager = GameManager
+    @property
+    def game_manager(self):
+        return self._game_manager
 
-    @classmethod
+    @game_manager.setter
+    def game_manager(self, value):
+        self._game_manager = value
+
     @abstractmethod
-    def process(cls, event):
+    def process(self, event):
         pass
