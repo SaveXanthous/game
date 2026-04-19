@@ -3,7 +3,6 @@ import pygame
 from core.events.base_events import BaseEvents
 
 class DefaultEvents(BaseEvents):
-    @classmethod
-    def process(cls, event):
+    def process(self, event):
         if event.type == pygame.QUIT:
-            cls._GameManager.stop()
+            self._game_manager.stop()

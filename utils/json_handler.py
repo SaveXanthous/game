@@ -28,3 +28,14 @@ class JSONHandler:
         data = JSONHandler.read(file_path)
         data[key] = value
         return JSONHandler.write(file_path, data)
+
+    @staticmethod
+    def get_by_key(file_path, key):
+        data = JSONHandler.read(file_path)
+        return data[key]
+
+    @staticmethod
+    def path_join(*paths):
+        return os.path.join(*paths)
+
+
