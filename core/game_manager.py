@@ -2,6 +2,8 @@ import pygame
 import pygame_gui
 from core.managers.event_manager import EventManager
 from core.managers.settings_manager import SettingsManager
+from entities.player.player import Player
+
 
 class GameManager:
 
@@ -47,6 +49,9 @@ class GameManager:
         if not cls.isInit:
             cls.init()
 
+        player = pygame.sprite.GroupSingle()
+        player.add(Player())
+
         while cls.running:
             time_delta = cls.clock.tick(cls.FPS) / 1000.0
 
@@ -56,6 +61,9 @@ class GameManager:
 
             cls.screen.fill((20, 20, 30))
             cls.manager.draw_ui(cls.screen)
+
+            player.draw(cls.screen)
+            player.update()
 
             pygame.display.update()
 
