@@ -4,7 +4,7 @@ import pygame
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("entities\player\player.png").convert_alpha()
+        self.image = pygame.image.load("entities/player/player.PNG").convert_alpha()
         self.rect = self.image.get_rect(midbottom = (640, 360))
 
     def player_input(self):
