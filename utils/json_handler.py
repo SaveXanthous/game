@@ -37,5 +37,3 @@ class JSONHandler:
     @staticmethod
     def path_join(*paths):
         return os.path.join(*paths)
-
-

@@ -1,79 +1,46 @@
 import pygame
 import pygame_gui
-from core.managers.event_manager import EventManager
-from core.managers.settings_manager import SettingsManager
+from initializer_game_manager import InitializerGameManager
+
 
 class GameManager:
+    def __init__(self):
+        self.running: bool = False
+        self.screen: pygame.Surface = None
+        self.clock: pygame.time.Clock = None
+        self.FPS: int = 60
+        self.manager = None  # Для pygame_gui
 
-    isInit = False
+        InitializerGameManager(self)
+    
+    def start(self):
+        while self.running:
+            time_delta = self.clock.tick(self.FPS) / 1000.0
 
-    @classmethod
-    def init(cls):
-        cls.isInit = True
+            self.process_events()
 
-        cls.__init_settings_manager()
-        cls.__init_pygame()
-        cls.__init_pygame_gui()
-        cls.__init_events()
+            self.manager.update(time_delta)
 
-    @classmethod
-    def __init_events(cls):
-        cls.event_manager = EventManager(cls)
-
-    @classmethod
-    def __init_settings_manager(cls):
-        cls.settings_manager = SettingsManager()
-
-    @classmethod
-    def __init_pygame(cls):
-        pygame.init()
-        cls.running = True
-        cls.__init_screen()
-
-    @classmethod
-    def __init_screen(cls):
-        cls.resolution = cls.settings_manager.graphics_settings.resolution
-        cls.FPS = cls.settings_manager.graphics_settings.fps
-        cls.screen = pygame.display.set_mode(cls.resolution)
-        cls.clock = pygame.time.Clock()
-
-
-    @classmethod
-    def __init_pygame_gui(cls):
-        cls.manager = pygame_gui.UIManager(cls.resolution)
-
-    @classmethod
-    def start(cls):
-        if not cls.isInit:
-            cls.init()
-
-        while cls.running:
-            time_delta = cls.clock.tick(cls.FPS) / 1000.0
-
-            cls.process_events()
-
-            cls.manager.update(time_delta)
-
-            cls.screen.fill((20, 20, 30))
-            cls.manager.draw_ui(cls.screen)
+            self.screen.fill((20, 20, 30))
+            self.manager.draw_ui(self.screen)
 
             pygame.display.update()
 
         pygame.quit()
 
-    @classmethod
-    def stop(cls):
-        cls.running = False
+    
+    def stop(self):
+        self.running = False
 
-    @classmethod
-    def process_events(cls):
+    
+    def process_events(self):
         for system_event in pygame.event.get():
-            cls.manager.process_events(system_event)
+            self.manager.process_events(system_event)
 
-            for handler_event in cls.event_manager.events:
+            for handler_event in self.event_manager.events:
                 handler_event.process(system_event)
 
-    @classmethod
-    def get_ui_manager(cls):
-        return cls.manager
+    
+    def get_ui_manager(self):
+        return self.manager
 
