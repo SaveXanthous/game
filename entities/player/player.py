@@ -1,9 +1,13 @@
 import pygame
 from pygame.math import Vector2
 
-class Player(pygame.sprite.Sprite):
+from entities.base.base_entity import BaseEntity
+
+
+class Player(BaseEntity):
     def __init__(self):
         super().__init__()
+
         self.image = pygame.image.load("data/sprites/player.png").convert_alpha()
         self.rect = self.image.get_rect(midbottom = (640, 360))
         self.type = "player"

@@ -3,13 +3,15 @@ from random import randint
 
 import pygame
 
+from entities.base.base_entity import BaseEntity
 from entities.player.player import Player
 from pygame.math import Vector2
 
-class Enemy(pygame.sprite.Sprite):
+class Enemy(BaseEntity):
 
     def __init__(self, player: Player):
         super().__init__()
+
         self.image = pygame.image.load("data/sprites/enemy.png")
         self.rect = self.image.get_rect(midbottom = (randint(0, 1280), randint(0, 720)))
         self.type = "enemy"
@@ -19,6 +21,9 @@ class Enemy(pygame.sprite.Sprite):
         self.velocity = Vector2(0, 0)
         self.speed = 0.5
         self.friction = 0.15
+
+        self.repulsion_strength = 1  # Сила отталкивания
+        self.personal_space = 20  # Расстояние, ближе которого врагам тесно
 
     def player_direction(self):
         acceleration = Vector2(0, 0)
@@ -38,15 +43,26 @@ class Enemy(pygame.sprite.Sprite):
     def move(self):
         self.velocity *= (1 - self.friction)
 
-        if self.velocity.length() < 0.1: self.velocity = Vector2(0, 0)
+        if self.velocity.length() < 0.1:
+            self.velocity = Vector2(0, 0)
 
         self.pos += self.velocity * self.speed  # нужно потом добавить time_delta
 
         self.rect = self.pos
 
-    def type(self):
-        return self.type
+    def avoid_overlap(self):
+        repulsion = Vector2(0, 0)
+        for other in Enemy.get_entities():
+            if other is not self:
+                diff = self.pos - other.pos
+                distance = diff.length()
+
+                if 0 < distance < self.personal_space:
+                    repulsion += diff.normalize() * (self.personal_space / distance)
+
+        self.velocity += repulsion * self.repulsion_strength
 
     def update(self):
         self.player_direction()
+        self.avoid_overlap()
         self.move()

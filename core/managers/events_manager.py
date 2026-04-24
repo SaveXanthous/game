@@ -1,24 +1,17 @@
 from events.default_events import DefaultEvents
+from core.game_handle import GameHandle
 
-class EventManager:
+class EventsManager(GameHandle):
 
     
     def __init__(self, game_manager):
+        GameHandle.__init__(self, game_manager)
         self._events = []
-        self._game_manager = game_manager
         self.add_event(DefaultEvents(self._game_manager))
-
-    @property
-    def game_manager(self):
-        return self._game_manager
 
     @property
     def events(self):
         return self._events
-
-    @game_manager.setter
-    def game_manager(self, value):
-        self._game_manager = value
 
     @events.setter
     def events(self, value):
