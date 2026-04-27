@@ -12,7 +12,7 @@ class Game(BaseScene):
         self.player = Player()
 
         self.add_sprites(self.player)
-        for i in range(70):
+        for i in range(1):
             self.add_sprites(Enemy(self.player))
 
     def update(self):

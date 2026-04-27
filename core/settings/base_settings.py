@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class BaseSettings(ABC):
 
-    def __init__(self, gmae_manager):
+    def __init__(self, game_manager):
         self._name_settings = "user_settings.json"
         self.set_settings(self._name_settings)
 
