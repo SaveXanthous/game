@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from itertools import count
 import pygame
 from pygame.math import Vector2
 from random import randint
+
+from entities.animation_component.animation import Animation
 
 
 class BaseEntity(ABC, pygame.sprite.Sprite):
@@ -15,9 +16,20 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         ABC.__init__(self)
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = pygame.image.load("data/sprites/enemy.png")
+        idle_sheet = pygame.image.load("data/sprites/player_idle.png").convert_alpha()
+
+        self.animations = {
+            "idle": Animation(idle_sheet, 100, 100, scale=2, duration=75, loop=True)
+        }
+
+        self.current_state = "idle"
+        self.image = self.animations[self.current_state].get_current_frame()
         self.rect = self.image.get_rect(midbottom = (randint(0, 1280), randint(0, 720)))
+
         self.pos = Vector2(self.rect.x, self.rect.y)
+        self.velocity = Vector2(0, 0)
+        self.speed = 1
+        self.friction = 0.15
 
         self._type = "none"
 
@@ -48,13 +60,26 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
     def type(self, value):
         self._type = value
 
-    # ---------------------------------------------------------------------------------------------
 
     @abstractmethod
     def update(self):
         pass
 
-    # ---------------------------------------------------------------------------------------------
+
+    @abstractmethod
+    def move(self):
+        pass
+
+
+    @abstractmethod
+    def set_state(self, new_state):
+        pass
+
+
+    @abstractmethod
+    def animate(self):
+        pass
+
 
     @classmethod
     def add(cls, value):
@@ -78,8 +103,6 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
     def generate_new_id(cls):
         cls._id_gen += 1
         return cls._id_gen
-
-    # ---------------------------------------------------------------------------------------------
 
     def kill(self, game_manager):
         BaseEntity.remove(self)
