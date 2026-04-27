@@ -24,6 +24,8 @@ class Player(BaseEntity):
         self.flip = False
         self._type = "player"
 
+        self.hitbox = self.rect.inflate(-90 * 2, -90 * 2)
+
         self.pos = Vector2(self.rect.x, self.rect.y)
         self.speed = 2
 
@@ -78,3 +80,4 @@ class Player(BaseEntity):
         self.player_input()
         self.move()
         self.animate()
+        self.hitbox.center = self.pos

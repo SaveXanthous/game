@@ -29,6 +29,7 @@ class Enemy(BaseEntity):
         self.pos = Vector2(self.rect.x, self.rect.y)
         self.speed = 1
 
+        self.hitbox = self.rect.inflate(-80 * 2, -80 * 2)
 
         self.repulsion_strength = 1  # Сила отталкивания
         self.personal_space = 20  # Расстояние, ближе которого врагам тесно
@@ -83,3 +84,8 @@ class Enemy(BaseEntity):
         self.avoid_overlap()
         self.move()
         self.animate()
+        self.hitbox.center = self.pos
+        if self.hitbox.colliderect(self.player.hitbox):
+            self.hp -= 1
+            if self.hp <= 0:
+                self.kill()

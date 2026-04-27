@@ -26,6 +26,9 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         self.image = self.animations[self.current_state].get_current_frame()
         self.rect = self.image.get_rect(midbottom = (randint(0, 1280), randint(0, 720)))
 
+        self.hp = 10
+        self.hitbox = self.rect.inflate(-80, -80)
+
         self.pos = Vector2(self.rect.x, self.rect.y)
         self.velocity = Vector2(0, 0)
         self.speed = 1
