@@ -59,7 +59,7 @@ class Enemy(BaseEntity):
 
     def avoid_overlap(self):
         repulsion = Vector2(0, 0)
-        for other in Enemy.get_entities():
+        for other in Enemy.get_group():
             if other is not self:
                 diff = self.pos - other.pos
                 distance = diff.length()

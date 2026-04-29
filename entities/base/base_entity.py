@@ -8,13 +8,17 @@ from entities.animation_component.animation import Animation
 
 class BaseEntity(ABC, pygame.sprite.Sprite):
 
-    entities = []
-    count = 0
+    container = pygame.sprite.Group()
     _id_gen = 0
+
+    def __init_subclass__(cls, **kwargs):
+        super.__init_subclass__(**kwargs)
+        cls.group = pygame.sprite.Group()
+
 
     def __init__(self):
         ABC.__init__(self)
-        pygame.sprite.Sprite.__init__(self)
+        pygame.sprite.Sprite.__init__(self, type(self).group, BaseEntity.container)
 
         idle_sheet = pygame.image.load("data/sprites/player_idle.png").convert_alpha()
 
@@ -34,7 +38,7 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         self._type = "none"
 
         self.id = BaseEntity.generate_new_id()
-        BaseEntity.add(self)
+
 
     @property
     def id(self):
@@ -81,23 +85,14 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         pass
 
 
-    @classmethod
-    def add(cls, value):
-        cls.entities.append(value)
-        cls.count += 1
 
     @classmethod
-    def remove(cls, value):
-        cls.entities.remove(value)
-        cls.count -= 1
-
-    @classmethod
-    def get_entities(cls):
-        return cls.entities
+    def get_group(cls):
+        return cls.group
 
     @classmethod
     def get_count(cls):
-        return len(cls.count)
+        return len(cls.group)
 
     @classmethod
     def generate_new_id(cls):
@@ -105,6 +100,4 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         return cls._id_gen
 
     def kill(self, game_manager):
-        BaseEntity.remove(self)
-        game_manager.remove(self)
-        del self
+        super().kill()

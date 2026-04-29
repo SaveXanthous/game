@@ -1,23 +1,28 @@
+from xml.dom.minidom import Entity
+
 import pygame
 
 from events.default_events import DefaultEvents
 from scenes.base.base_scene import BaseScene
 from entities.player.player import Player
 from entities.enemy.enemy import Enemy
+from entities.base.base_entity import BaseEntity
 
 class Game(BaseScene):
     def __init__(self, game_manager):
         super().__init__(game_manager)
 
         self.player = Player()
+        Enemy(self.player)
+        Enemy(self.player)
+        Enemy(self.player)
+        Enemy(self.player)
 
-        self.add_sprites(self.player)
-        for i in range(1):
-            self.add_sprites(Enemy(self.player))
+        print(BaseEntity.container)
 
     def update(self):
-        self.sprites.update()
+        BaseEntity.container.update()
 
     def draw(self):
-        self.sprites.draw(self.screen)
+        BaseEntity.container.draw(self.screen)
 
