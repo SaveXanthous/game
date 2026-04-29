@@ -85,7 +85,6 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         pass
 
 
-
     @classmethod
     def get_group(cls):
         return cls.group
@@ -99,5 +98,5 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         cls._id_gen += 1
         return cls._id_gen
 
-    def kill(self, game_manager):
+    def kill(self):
         super().kill()

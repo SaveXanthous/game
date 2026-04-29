@@ -18,6 +18,9 @@ class Game(BaseScene):
         Enemy(self.player)
         Enemy(self.player)
 
+        for i in Enemy.get_group():
+            i.kill()
+
         print(BaseEntity.container)
 
     def update(self):
