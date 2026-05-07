@@ -33,11 +33,11 @@ class Initializer(ABC):
     def _init_pygame(self):
         pygame.init()
         self.running = True
-
         self.resolution = self.settings_manager.graphics_settings.resolution
         self.FPS = self.settings_manager.graphics_settings.fps
         self.screen = pygame.display.set_mode(self.resolution)
         self.clock = pygame.time.Clock()
+        self.time_delta = 0
 
 
     

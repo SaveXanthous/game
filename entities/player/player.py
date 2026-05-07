@@ -24,8 +24,10 @@ class Player(BaseEntity):
         self.flip = False
         self._type = "player"
 
+        self.hp = 100
+
         self.pos = Vector2(self.rect.x, self.rect.y)
-        self.speed = 2
+        self.speed = 1
 
     def set_state(self, new_state):
         if self.current_state != new_state:
@@ -60,21 +62,12 @@ class Player(BaseEntity):
         if keys[pygame.K_UP] and keys[pygame.K_DOWN]:
             acceleration.y = 0
 
-        if acceleration.length() > 0:
+        if acceleration.length() != 0:
             acceleration.normalize()
 
         self.velocity += acceleration
 
-    def move(self):
-        self.velocity *= (1 - self.friction)
-
-        if self.velocity.length() < 0.1: self.velocity = Vector2(0, 0)
-
-        self.pos += self.velocity * self.speed # нужно потом добавить time_delta
-
-        self.rect = self.pos
-
     def update(self):
         self.player_input()
-        self.move()
+        super().move()
         self.animate()

@@ -37,6 +37,10 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
 
         self._type = "none"
 
+        self.hitbox = self.rect.inflate(-80, -80)
+        self.hp = 1
+        self.damage = 0
+
         self.id = BaseEntity.generate_new_id()
 
 
@@ -71,11 +75,6 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
 
 
     @abstractmethod
-    def move(self):
-        pass
-
-
-    @abstractmethod
     def set_state(self, new_state):
         pass
 
@@ -97,6 +96,16 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
     def generate_new_id(cls):
         cls._id_gen += 1
         return cls._id_gen
+
+
+    def move(self):
+        self.velocity *= (1 - self.friction)
+
+        if self.velocity.length() < 0.1: self.velocity = Vector2(0, 0)
+
+        self.pos += self.velocity * self.speed  # нужно потом добавить time_delta
+
+        self.rect = self.pos
 
     def kill(self):
         super().kill()
