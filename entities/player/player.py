@@ -20,14 +20,15 @@ class Player(BaseEntity):
 
         self.current_state = "idle"
         self.image = self.animations[self.current_state].get_current_frame()
-        self.rect = self.image.get_rect(midbottom = (640, 360))
+        self.rect = self.image.get_rect(midbottom = (700, 600))
         self.flip = False
         self._type = "player"
 
-        self.hp = 100
+        self.hp = 10
+        self.invincibility_duration = 1000
 
         self.pos = Vector2(self.rect.x, self.rect.y)
-        self.speed = 1
+        self.speed = 0.9
 
     def set_state(self, new_state):
         if self.current_state != new_state:
@@ -71,3 +72,5 @@ class Player(BaseEntity):
         self.player_input()
         super().move()
         self.animate()
+        if self.hp <= 0:
+            self.kill()

@@ -37,9 +37,11 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
 
         self._type = "none"
 
-        self.hitbox = self.rect.inflate(-80, -80)
+        self.hitbox = self.rect.inflate(-80 * 2, -80 * 2)
         self.hp = 1
         self.damage = 0
+        self.last_hit_time = 0
+        self.invincibility_duration = 500
 
         self.id = BaseEntity.generate_new_id()
 
@@ -97,6 +99,13 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         cls._id_gen += 1
         return cls._id_gen
 
+    def take_damage(self, amount):
+        now = pygame.time.get_ticks()
+        if now - self.last_hit_time > self.invincibility_duration:
+            self.hp -= amount
+            self.last_hit_time = now
+            return True
+        return False
 
     def move(self):
         self.velocity *= (1 - self.friction)
@@ -105,7 +114,9 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
 
         self.pos += self.velocity * self.speed  # нужно потом добавить time_delta
 
-        self.rect = self.pos
+        self.rect.center = self.pos
+
+        self.hitbox.center = self.rect.center
 
     def kill(self):
         super().kill()

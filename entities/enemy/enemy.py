@@ -34,6 +34,11 @@ class Enemy(BaseEntity):
         self.repulsion_strength = 1  # Сила отталкивания
         self.personal_space = 20  # Расстояние, ближе которого врагам тесно
 
+    def deal_damage(self):
+        if self.hitbox.colliderect(self.player.hitbox):
+            if self.player.take_damage(self.damage):
+                return
+
     def set_state(self, new_state):
         if self.current_state != new_state:
             self.current_state = new_state
@@ -51,7 +56,6 @@ class Enemy(BaseEntity):
         current_animation.update()
         raw_image = current_animation.get_current_frame()
         self.image = pygame.transform.flip(raw_image, self.flip, False)
-
 
     def player_direction(self):
         acceleration = (self.player.pos - self.pos).normalize()
@@ -75,3 +79,7 @@ class Enemy(BaseEntity):
         self.avoid_overlap()
         super().move()
         self.animate()
+        self.deal_damage()
+
+        if self.hp <= 0:
+            self.kill()
