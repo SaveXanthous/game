@@ -24,9 +24,16 @@ class JSONHandler:
             return False
 
     @staticmethod
-    def update(file_path, key, value):
+    def update(file_path, value ,*keys):
         data = JSONHandler.read(file_path)
-        data[key] = value
+        current_data = data
+        for key in keys[:-1]:
+            if not isinstance(current_data, list) and key not in current_data:
+                return False
+            current_data = current_data[key]
+
+        current_data[keys[-1]] = value
+
         return JSONHandler.write(file_path, data)
 
     @staticmethod
@@ -37,5 +44,14 @@ class JSONHandler:
     @staticmethod
     def path_join(*paths):
         return os.path.join(*paths)
+
+    @staticmethod
+    def merge_files(source_path, target_path):
+        source_data = JSONHandler.read(source_path)
+        target_data = JSONHandler.read(target_path)
+
+        updated_data = target_data | source_data
+
+        return JSONHandler.write(target_path, updated_data)
 
 
