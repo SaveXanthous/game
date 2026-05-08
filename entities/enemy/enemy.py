@@ -8,7 +8,6 @@ from entities.player.player import Player
 from pygame.math import Vector2
 
 class Enemy(BaseEntity):
-
     def __init__(self, player: Player):
         super().__init__()
 
@@ -26,12 +25,19 @@ class Enemy(BaseEntity):
         self._type = "enemy"
         self.player = player
 
-        self.pos = Vector2(self.rect.x, self.rect.y)
-        self.speed = 1
+        self.hp = 10
+        self.damage = 5
 
+        self.pos = Vector2(self.rect.x, self.rect.y)
+        self.speed = 0.5
 
         self.repulsion_strength = 1  # Сила отталкивания
         self.personal_space = 20  # Расстояние, ближе которого врагам тесно
+
+    def deal_damage(self):
+        if self.hitbox.colliderect(self.player.hitbox):
+            if self.player.take_damage(self.damage):
+                return
 
     def set_state(self, new_state):
         if self.current_state != new_state:
@@ -51,7 +57,6 @@ class Enemy(BaseEntity):
         raw_image = current_animation.get_current_frame()
         self.image = pygame.transform.flip(raw_image, self.flip, False)
 
-
     def player_direction(self):
         acceleration = (self.player.pos - self.pos).normalize()
 
@@ -69,17 +74,12 @@ class Enemy(BaseEntity):
 
         self.velocity += repulsion * self.repulsion_strength
 
-    def move(self):
-        self.velocity *= (1 - self.friction)
-
-        if self.velocity.length() < 0.1: self.velocity = Vector2(0, 0)
-
-        self.pos += self.velocity * self.speed # нужно потом добавить time_delta
-
-        self.rect = self.pos
-
     def update(self):
         self.player_direction()
         self.avoid_overlap()
-        self.move()
+        super().move()
         self.animate()
+        self.deal_damage()
+
+        if self.hp <= 0:
+            self.kill()

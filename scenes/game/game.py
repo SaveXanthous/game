@@ -2,6 +2,7 @@ from xml.dom.minidom import Entity
 
 import pygame
 
+from entities.ability.ability import Ability
 from events.default_events import DefaultEvents
 from scenes.base.base_scene import BaseScene
 from entities.player.player import Player
@@ -17,9 +18,25 @@ class Game(BaseScene):
         Enemy(self.player)
         Enemy(self.player)
         Enemy(self.player)
+        Enemy(self.player)
+        Enemy(self.player)
+        Enemy(self.player)
+        Enemy(self.player)
 
-        for i in Enemy.get_group():
-            i.kill()
+
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
+        Ability()
 
         print(BaseEntity.container)
 
