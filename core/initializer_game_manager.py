@@ -1,14 +1,15 @@
 from abc import ABC
 
 import pygame
-import pygame_gui
+
 from core.managers.events_manager import EventsManager
 from core.managers.settings_manager import SettingsManager
+from core.managers.ui_manager import UIManager
 from managers.scenes_manager import SceneManager
-from scenes.game.game import Game
+from scenes.menu.menu import Menu
 
 class Initializer(ABC):
-    
+
     def __init__(self):
 
         self._init_settings_manager()
@@ -19,17 +20,20 @@ class Initializer(ABC):
 
 
     def _init_scene(self):
-        self.scenes_manager = SceneManager(self)
+        self.scenes_manager = SceneManager(self, Menu)
 
-    
+
     def _init_events(self):
         self.events_manager = EventsManager(self)
 
-    
+
     def _init_settings_manager(self):
         self.settings_manager = SettingsManager()
 
-    
+    def _init_pygame_gui(self):
+        self.ui_manager = UIManager(self)
+
+
     def _init_pygame(self):
         pygame.init()
         self.running = True
@@ -38,9 +42,3 @@ class Initializer(ABC):
         self.FPS = self.settings_manager.graphics_settings.fps
         self.screen = pygame.display.set_mode(self.resolution)
         self.clock = pygame.time.Clock()
-
-
-    
-    def _init_pygame_gui(self):
-        self.manager_ui = pygame_gui.UIManager(self.resolution)
-        
