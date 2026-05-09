@@ -1,4 +1,4 @@
-from core.game_manager import GameManager
+from managers.game_manager import GameManager
 
 def main():
     GameManager().start()
