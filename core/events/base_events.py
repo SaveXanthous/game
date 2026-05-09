@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from core.game_handle import GameHandle
+from game.game_handle import GameHandle
 
 
-class BaseEvents(ABC):
+class BaseEvents(ABC,GameHandle):
     def __init__(self, game_manager, scene = None):
         GameHandle.__init__(self, game_manager)
         self._scene = scene
@@ -18,10 +18,6 @@ class BaseEvents(ABC):
     @scene.setter
     def scene(self, scene):
         self._scene = scene
-
-    @game_manager.setter
-    def game_manager(self, value):
-        self._game_manager = value
 
     @abstractmethod
     def process(self, event):
