@@ -1,3 +1,4 @@
+from utils.scaler import Scaler
 from utils.json_handler import JSONHandler
 from core.settings.base_settings import BaseSettings
 
@@ -47,6 +48,8 @@ class GraphicsSettings(BaseSettings):
         WIDTH, HEIGHT = map(int, screen_resolution.split("x"))
         FPS = JSONHandler.get_by_key(path, "FPS")
 
-        self.width = WIDTH
-        self.height = HEIGHT
-        self.fps = FPS
+        self._width = WIDTH
+        self._height = HEIGHT
+        self._fps = FPS
+
+        Scaler.set_scale(WIDTH, HEIGHT)

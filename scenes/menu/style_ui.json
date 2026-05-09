@@ -1,0 +1,14 @@
+{
+    "button": {
+        "font": {
+            "name": "monospace",
+            "size": "24"
+        }
+    },
+    "label": {
+        "font": {
+            "name": "monospace",
+            "size": "72"
+        }
+    }
+}
