@@ -1,4 +1,4 @@
-from core.game_handle import GameHandle
+from game.game_handle import GameHandle
 
 class SceneManager(GameHandle):
     def __init__(self, game_manager, scene):
