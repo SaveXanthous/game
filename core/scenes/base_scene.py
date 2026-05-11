@@ -14,7 +14,7 @@ class BaseScene(ABC, GameHandle):
         ABC.__init__(self)
         GameHandle.__init__(self, game_manager)
 
-        self.screen = game_manager.screen
+        self.screen = self.game_manager.screen
         self.name =  type(self).__module__.split('.')[-1]
         self.ui_elements = {}
 

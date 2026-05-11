@@ -16,5 +16,5 @@ class Timer:
             return True
         return False
 
-    def duration(self, new_duration):
+    def set_duration(self, new_duration):
         self.duration = new_duration

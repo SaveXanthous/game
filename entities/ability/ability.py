@@ -31,8 +31,8 @@ class Ability(BaseEntity):
         self.current_state = "arrow"
         self.image = self.animations[self.current_state].get_current_frame()
 
-        spawn_x = self.target_enemy.pos.x
-        spawn_y = self.target_enemy.pos.y - 5
+        spawn_x = self.target_enemy.hitbox.centerx
+        spawn_y = self.target_enemy.hitbox.top - 5
 
         self.max_distance = 200
 
