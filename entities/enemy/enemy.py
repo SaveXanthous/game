@@ -26,7 +26,7 @@ class Enemy(BaseEntity):
         self.player = player
 
         self.hp = 10
-        self.damage = 5
+        self.damage = 1
 
         self.pos = Vector2(self.rect.x, self.rect.y)
         self.speed = 0.5

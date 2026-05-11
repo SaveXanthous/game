@@ -1,13 +1,15 @@
 import pygame
 
+from utils.timer import Timer
+
+
 class Animation:
     def __init__(self, sheet, frame_width, frame_height, scale=1, duration=100, loop=True):
 
         self.frames = []
         self.loop = loop
-        self.duration = duration
+        self.timer = Timer(duration)
         self.current_frame = 0
-        self.last_update = pygame.time.get_ticks()
         self.finished = False
 
         sheet_width, sheet_height = sheet.get_size()
@@ -27,15 +29,13 @@ class Animation:
     def reset(self):
         self.current_frame = 0
         self.finished = False
-        self.last_update = pygame.time.get_ticks()
+        self.timer.next_tick = pygame.time.get_ticks() + self.timer.duration
 
     def update(self):
         if self.finished and not self.loop:
             return
 
-        now = pygame.time.get_ticks()
-        if now - self.last_update > self.duration:
-            self.last_update = now
+        if self.timer.check():
             self.current_frame += 1
 
             if self.current_frame >= len(self.frames):

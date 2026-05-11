@@ -4,7 +4,7 @@ import pygame
 
 from entities.ability.ability import Ability
 from events.default_events import DefaultEvents
-from scenes.base.base_scene import BaseScene
+from scenes.base_scene import BaseScene
 from entities.player.player import Player
 from entities.enemy.enemy import Enemy
 from entities.base.base_entity import BaseEntity
@@ -14,29 +14,7 @@ class Game(BaseScene):
         super().__init__(game_manager)
 
         self.player = Player()
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
 
-
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
 
         print(BaseEntity.container)
 
