@@ -2,10 +2,14 @@ from random import randint
 
 import pygame
 
+import utils.scaler
 from entities.animation_component.animation import Animation
 from entities.base.base_entity import BaseEntity
 from entities.player.player import Player
 from pygame.math import Vector2
+
+from utils import scaler
+
 
 class Enemy(BaseEntity):
     def __init__(self, player: Player):
@@ -19,7 +23,7 @@ class Enemy(BaseEntity):
 
         self.current_state = "walk"
         self.image = self.animations[self.current_state].get_current_frame()
-        self.rect = self.image.get_rect(midbottom=(randint(0, 1280), randint(0, 720)))
+        self.rect = self.image.get_rect(midbottom=(randint(0, scaler.Scaler.scaled_x(1280)), randint(0, scaler.Scaler.scaled_x(720))))
         self.flip = False
 
         self._type = "enemy"
@@ -29,11 +33,13 @@ class Enemy(BaseEntity):
         self.damage = 1
 
         self.pos = Vector2(self.rect.x, self.rect.y)
-        self.speed = 0.5
+        self.speed = 0.25
 
         self.repulsion_strength = 1  # Сила отталкивания
         self.personal_space = 20  # Расстояние, ближе которого врагам тесно
 
+    def spawn_position(self):
+        spawn_point = Vector2(self.rect.x, self.rect.y)
     def deal_damage(self):
         if self.hitbox.colliderect(self.player.hitbox):
             if self.player.take_damage(self.damage):

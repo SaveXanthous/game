@@ -31,8 +31,8 @@ class Ability(BaseEntity):
         self.current_state = "arrow"
         self.image = self.animations[self.current_state].get_current_frame()
 
-        spawn_x = self.target_enemy.rect.centerx
-        spawn_y = self.target_enemy.rect.top - 5
+        spawn_x = self.target_enemy.pos.x
+        spawn_y = self.target_enemy.pos.y - 5
 
         self.max_distance = 200
 
@@ -48,7 +48,7 @@ class Ability(BaseEntity):
         self.pos = Vector2(self.rect.x, self.rect.y)
         self.start_pos = self.pos
         self.velocity = Vector2(0, 1)
-        self.speed = 5
+        self.speed = 7.5
         self.friction = 0
 
     def deal_damage(self):

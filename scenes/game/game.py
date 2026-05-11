@@ -4,6 +4,7 @@ import pygame
 
 from entities.ability.ability import Ability
 from events.default_events import DefaultEvents
+from managers.arena_manager import ArenaManager
 from scenes.base_scene import BaseScene
 from entities.player.player import Player
 from entities.enemy.enemy import Enemy
@@ -15,11 +16,18 @@ class Game(BaseScene):
 
         self.player = Player()
 
+        self.arena_manager = ArenaManager(self.player)
 
-        print(BaseEntity.container)
+        self.arena_manager.update_enemy_types(Enemy.type, 2000)
+
+        self.arena_manager.update_ability_types(Ability.type, 1000)
 
     def update(self):
+        self.arena_manager.update()
+
         BaseEntity.container.update()
+
+        print(BaseEntity.container)
 
     def draw(self):
         BaseEntity.container.draw(self.screen)

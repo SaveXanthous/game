@@ -99,6 +99,7 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         cls._id_gen += 1
         return cls._id_gen
 
+
     def take_damage(self, amount):
         now = pygame.time.get_ticks()
         if now - self.last_hit_time > self.invincibility_duration:

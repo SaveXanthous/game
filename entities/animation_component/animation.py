@@ -6,6 +6,8 @@ from utils.timer import Timer
 class Animation:
     def __init__(self, sheet, frame_width, frame_height, scale=1, duration=100, loop=True):
 
+
+
         self.frames = []
         self.loop = loop
         self.timer = Timer(duration)
