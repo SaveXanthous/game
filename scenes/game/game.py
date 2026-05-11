@@ -4,7 +4,8 @@ import pygame
 
 from entities.ability.ability import Ability
 from events.default_events import DefaultEvents
-from scenes.base.base_scene import BaseScene
+from managers.arena_manager import ArenaManager
+from scenes.base_scene import BaseScene
 from entities.player.player import Player
 from entities.enemy.enemy import Enemy
 from entities.base.base_entity import BaseEntity
@@ -14,34 +15,21 @@ class Game(BaseScene):
         super().__init__(game_manager)
 
         self.player = Player()
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
-        Enemy(self.player)
 
+        self.arena_manager = ArenaManager(self.player, self.game_manager)
 
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
-        Ability()
+        base_interval = 2000
+        adjusted_interval = base_interval / self.game_manager.difficulty
 
-        print(BaseEntity.container)
+        self.arena_manager.update_enemy_types(Enemy.type, adjusted_interval)
+
+        self.arena_manager.update_ability_types(Ability.type, 1000)
 
     def update(self):
+        self.arena_manager.update()
+
         BaseEntity.container.update()
+
 
     def draw(self):
         BaseEntity.container.draw(self.screen)

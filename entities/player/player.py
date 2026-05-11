@@ -13,6 +13,7 @@ class Player(BaseEntity):
         walk_sheet = pygame.image.load("data/sprites/player_walk.png").convert_alpha()
 
 
+
         self.animations = {
             "idle": Animation(idle_sheet, 100, 100, scale=2, duration=75, loop=True),
             "walk": Animation(walk_sheet, 100, 100, scale=2, duration=50, loop=True)
@@ -24,11 +25,11 @@ class Player(BaseEntity):
         self.flip = False
         self._type = "player"
 
-        self.hp = 10
+        self.hp = 5
         self.invincibility_duration = 1000
 
         self.pos = Vector2(self.rect.x, self.rect.y)
-        self.speed = 0.9
+        self.speed = 0.8
 
     def set_state(self, new_state):
         if self.current_state != new_state:

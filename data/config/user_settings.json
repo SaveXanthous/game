@@ -3,5 +3,6 @@
     "FPS": 60,
     "sound_volume": 50,
     "music_volume": 50,
-    "effect_volume": 50
+    "effect_volume": 50,
+    "difficulty": 1.0
 }
