@@ -42,3 +42,4 @@ class Initializer(ABC):
         self.FPS = self.settings_manager.graphics_settings.fps
         self.screen = pygame.display.set_mode(self.resolution)
         self.clock = pygame.time.Clock()
+        self.time_delta = 0

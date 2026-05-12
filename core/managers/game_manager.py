@@ -5,11 +5,11 @@ from game.initializer_game_manager import Initializer
 class GameManager(Initializer):
     def start(self):
         while self.running:
-            time_delta = self.clock.tick(self.FPS) / 1000.0
+            self.time_delta = self.clock.tick(self.FPS) / 1000.0
 
             self.process_events()
 
-            self.ui_manager.manager.update(time_delta)
+            self.ui_manager.manager.update(self.time_delta)
 
             self.screen.fill((20, 20, 30))
 
