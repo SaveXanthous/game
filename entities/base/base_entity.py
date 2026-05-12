@@ -75,7 +75,6 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
     def update(self):
         pass
 
-
     @abstractmethod
     def set_state(self, new_state):
         pass
