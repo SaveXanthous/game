@@ -44,6 +44,8 @@ class UIManager(GameHandle):
     def update_ui(self):
         path = JSONHandler.path_join('scenes')
         for dir in DirHandler.get_dirs(path):
+            if dir == 'base':
+                continue
             self.ui_scaler.scaled_ui(dir)
         self.kill()
         self.game_manager.scenes_manager.current_scene.init_ui()

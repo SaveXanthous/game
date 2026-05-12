@@ -1,6 +1,5 @@
-from scenes.base_scene import BaseScene
+from scenes.base.base_scene import BaseScene
 from scenes.menu.events import MenuEvents
-from utils.json_handler import JSONHandler
 
 
 class Menu(BaseScene):

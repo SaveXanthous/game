@@ -1,7 +1,3 @@
-from xml.dom.minidom import Entity
-
-import pygame
-
 from entities.ability.ability import Ability
 from events.default_events import DefaultEvents
 from managers.arena_manager import ArenaManager

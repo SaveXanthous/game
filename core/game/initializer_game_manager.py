@@ -43,3 +43,4 @@ class Initializer(ABC):
         self.difficulty = self.settings_manager.difficulty_settings.difficulty
         self.screen = pygame.display.set_mode(self.resolution)
         self.clock = pygame.time.Clock()
+        self.time_delta = 0
