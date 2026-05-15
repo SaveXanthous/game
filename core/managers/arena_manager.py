@@ -7,10 +7,8 @@ from utils.timer import Timer
 
 class ArenaManager:
 
-    def __init__(self, player, game_manager):
-        self.game_manager = game_manager
-
-        self.difficulty = self.game_manager.difficulty
+    def __init__(self, player):
+        self.difficulty = 1.0
         self.difficulty_timer = Timer(10000)
 
         self.player = player
@@ -19,7 +17,7 @@ class ArenaManager:
         self.ability_types = dict()
 
     def update_enemy_types(self, new_type, duration):
-        self.enemy_types.update({new_type: Timer(duration)})
+        self.enemy_types.update({new_type: Timer(duration * (2 - self.difficulty))})
 
     def update_ability_types(self, new_type, duration):
         self.ability_types.update({new_type: Timer(duration * (2 - self.difficulty))})
@@ -28,7 +26,7 @@ class ArenaManager:
         for enemy_class, timer in self.enemy_types.items():
             if timer.check():
                 if enemy_class == Enemy.type:
-                    Enemy(self.player, self.game_manager)
+                    Enemy(self.player, self)
 
     def use_abilities(self):
         for ability_class, timer in self.ability_types.items():
@@ -38,14 +36,13 @@ class ArenaManager:
 
     def update_difficulty(self):
         if self.difficulty_timer.check():
-            self.game_manager.difficulty += 0.05
-            self.difficulty = self.game_manager.difficulty
+            self.difficulty += 0.90
 
             for timer in self.enemy_types.values():
                 timer.set_duration(timer.duration * (2 - self.difficulty))
 
     def update(self):
-        if not self.game_manager.difficulty == 1.90:
+        if not self.difficulty == 1.90:
             self.update_difficulty()
 
         self.spawn_enemies()

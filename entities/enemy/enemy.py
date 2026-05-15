@@ -12,7 +12,7 @@ from utils import scaler
 
 
 class Enemy(BaseEntity):
-    def __init__(self, player: Player, game_manager):
+    def __init__(self, player: Player, arena_manager):
         super().__init__()
 
         walk_sheet = pygame.image.load("data/sprites/enemy_walk.png").convert_alpha()
@@ -29,8 +29,8 @@ class Enemy(BaseEntity):
         self._type = "enemy"
         self.player = player
 
-        self.game_manager = game_manager
-        self.difficulty = self.game_manager.difficulty
+        self.arena_manager = arena_manager
+        self.difficulty = self.arena_manager.difficulty
 
         self.hp = 10 * self.difficulty
         self.damage = 1
@@ -42,7 +42,7 @@ class Enemy(BaseEntity):
         self.personal_space = 20  # Расстояние, ближе которого врагам тесно
 
     def update_difficulty(self):
-        new_difficulty = self.game_manager.difficulty
+        new_difficulty = self.arena_manager.difficulty
         if new_difficulty > self.difficulty:
             self.difficulty = new_difficulty
             self.speed *= self.difficulty
