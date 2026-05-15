@@ -14,12 +14,9 @@ class Game(BaseScene):
 
         self.player = Player()
 
-        self.arena_manager = ArenaManager(self.player, self.game_manager)
+        self.arena_manager = ArenaManager(self.player)
 
-        base_interval = 2000
-        adjusted_interval = base_interval / self.game_manager.difficulty
-
-        self.arena_manager.update_enemy_types(Enemy.type, adjusted_interval)
+        self.arena_manager.update_enemy_types(Enemy.type, 2000)
 
         self.arena_manager.update_ability_types(Ability.type, 1000)
 
