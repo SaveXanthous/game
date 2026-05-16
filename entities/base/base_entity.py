@@ -3,7 +3,7 @@ import pygame
 from pygame.math import Vector2
 from random import randint
 
-from entities.animation_component.animation import Animation
+from utils.animation import Animation
 
 
 class BaseEntity(ABC, pygame.sprite.Sprite):
@@ -23,10 +23,10 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         idle_sheet = pygame.image.load("data/sprites/player_idle.png").convert_alpha()
 
         self.animations = {
-            "idle": Animation(idle_sheet, 100, 100, scale=2, duration=75, loop=True)
+            "none": Animation(idle_sheet, 100, 100, scale=2, duration=75, loop=True)
         }
 
-        self.current_state = "idle"
+        self.current_state = "none"
         self.image = self.animations[self.current_state].get_current_frame()
         self.rect = self.image.get_rect(midbottom = (randint(0, 1280), randint(0, 720)))
 

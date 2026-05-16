@@ -1,7 +1,5 @@
 from entities.ability.ability import Ability
-from entities.player import player
-from events.default_events import DefaultEvents
-from managers.arena_manager import ArenaManager
+from scenes.game.arena_manager import ArenaManager
 from scenes.base.base_scene import BaseScene
 from entities.player.player import Player
 from entities.enemy.enemy import Enemy
@@ -31,5 +29,4 @@ class Game(BaseScene):
 
     def draw(self):
         self.camera.draw(BaseEntity.container)
-        # BaseEntity.container.draw(self.screen)
 

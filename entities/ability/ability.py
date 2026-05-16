@@ -1,9 +1,9 @@
-from random import randint, choice
+from random import choice
 
 import pygame
 from pygame.math import Vector2
 
-from entities.animation_component.animation import Animation
+from utils.animation import Animation
 from entities.base.base_entity import BaseEntity
 from entities.enemy.enemy import Enemy
 

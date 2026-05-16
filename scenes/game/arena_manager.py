@@ -36,7 +36,7 @@ class ArenaManager:
 
     def update_difficulty(self):
         if self.difficulty_timer.check():
-            self.difficulty += 0.90
+            self.difficulty += 0.05
 
             for timer in self.enemy_types.values():
                 timer.set_duration(timer.duration * (2 - self.difficulty))
