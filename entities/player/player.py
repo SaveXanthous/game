@@ -1,7 +1,8 @@
 import pygame
 from pygame.math import Vector2
 
-from entities.animation_component.animation import Animation
+from entities.experience_coin.experience_coin import ExperienceCoin
+from utils.animation import Animation
 from entities.base.base_entity import BaseEntity
 
 
@@ -15,8 +16,8 @@ class Player(BaseEntity):
 
 
         self.animations = {
-            "idle": Animation(idle_sheet, 100, 100, scale=2, duration=75, loop=True),
-            "walk": Animation(walk_sheet, 100, 100, scale=2, duration=50, loop=True)
+            "idle": Animation(idle_sheet, 100, 100, scale=2, duration=100, loop=True),
+            "walk": Animation(walk_sheet, 100, 100, scale=2, duration=75, loop=True)
         }
 
         self.current_state = "idle"
@@ -43,6 +44,8 @@ class Player(BaseEntity):
         elif self.velocity.x < 0:
             self.set_state("walk")
             self.flip = True
+        elif self.velocity.y != 0:
+            self.set_state("walk")
         else:
             self.set_state("idle")
         current_animation = self.animations[self.current_state]
@@ -70,9 +73,20 @@ class Player(BaseEntity):
 
         self.velocity += acceleration
 
+    def pick_coin(self):
+        coins_group = ExperienceCoin.get_group()
+
+        for coin in coins_group:
+            if self.hitbox.colliderect(coin.hitbox):
+                # self.gain_xp(coin.xp_value)
+                coin.kill()
+
     def update(self):
         self.player_input()
-        super().move()
+        self.move()
         self.animate()
+
+        self.pick_coin()
+
         if self.hp <= 0:
             self.kill()

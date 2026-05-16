@@ -2,14 +2,13 @@ from random import randint
 
 import pygame
 
-import utils.scaler
-from entities.animation_component.animation import Animation
+from entities.experience_coin.experience_coin import ExperienceCoin
+from utils.animation import Animation
 from entities.base.base_entity import BaseEntity
 from entities.player.player import Player
 from pygame.math import Vector2
 
 from utils import scaler
-
 
 class Enemy(BaseEntity):
     def __init__(self, player: Player, arena_manager):
@@ -87,13 +86,21 @@ class Enemy(BaseEntity):
 
         self.velocity += repulsion * self.repulsion_strength
 
+    def kill(self):
+        drop_chance = 100
+
+        if randint(1, 100) <= drop_chance:
+            ExperienceCoin(self.pos, self.player)
+
+        super().kill()
+
     def update(self):
         self.player_direction()
         self.avoid_overlap()
 
         self.update_difficulty()
 
-        super().move()
+        self.move()
         self.animate()
         self.deal_damage()
 
