@@ -20,12 +20,7 @@ class AbilityManager:
 
 
     def use_abilities(self, ability_type):
-        timer = self.ability_types[ability_type]
-        if timer.check():
-            if ability_type == Ability.type:
-                Ability()
-
-
-
-    def update(self):
-        pass
+        timer = self.ability_types.get(ability_type)
+        if timer and timer.check():
+            if ability_type == "ability":
+                Ability(self.player)

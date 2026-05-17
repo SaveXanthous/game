@@ -81,7 +81,7 @@ class Player(BaseEntity):
 
     def update(self):
         self.player_input()
-        self.move()
+        super().move()
         self.animate()
 
         self.pick_coin()

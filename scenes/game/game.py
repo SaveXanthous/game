@@ -9,6 +9,7 @@ from entities.camera.camera import Camera
 from entities.world.world import World
 from scenes.game.ability_manager import AbilityManager
 from scenes.game.arena_manager import ArenaManager
+from scenes.game.events import PlayerControlsEvents
 
 
 class Game(BaseScene):
@@ -38,14 +39,16 @@ class Game(BaseScene):
 
         self.ability_manager = AbilityManager(self.player)
 
+        self.player_events = PlayerControlsEvents(self.game_manager, self, self.ability_manager)
+        self.game_manager.events_manager.add_events(self.player_events)
+
         self.arena_manager.update_enemy_types("enemy", 2000)
 
-        self.ability_manager.update_ability_types(Ability.type, 1000)
+        self.ability_manager.update_ability_types("ability", 1000)
 
 
     def update(self):
         self.arena_manager.update()
-        self.ability_manager.update()
         BaseEntity.container.update()
 
 
