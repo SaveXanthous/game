@@ -13,8 +13,6 @@ class Player(BaseEntity):
         idle_sheet = pygame.image.load("data/sprites/player_idle.png").convert_alpha()
         walk_sheet = pygame.image.load("data/sprites/player_walk.png").convert_alpha()
 
-
-
         self.animations = {
             "idle": Animation(idle_sheet, 100, 100, scale=2, duration=100, loop=True),
             "walk": Animation(walk_sheet, 100, 100, scale=2, duration=75, loop=True)
