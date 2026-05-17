@@ -21,7 +21,7 @@ class Player(BaseEntity):
 
         self.current_state = "idle"
         self.image = self.animations[self.current_state].get_current_frame()
-        self.rect = self.image.get_rect(midbottom = (700, 600))
+        self.rect = self.image.get_rect()
         self.flip = False
         self._type = "player"
 
@@ -49,6 +49,7 @@ class Player(BaseEntity):
         current_animation.update()
         raw_image = current_animation.get_current_frame()
         self.image = pygame.transform.flip(raw_image, self.flip, False)
+
 
     def player_input(self):
         keys = pygame.key.get_pressed()
