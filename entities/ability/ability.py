@@ -11,12 +11,33 @@ from utils.timer import Timer
 
 class Ability(BaseEntity):
     def __init__(self, player):
-        enemies = list(Enemy.get_group())
+        super().__init__()
 
-        if not enemies:
-            super().__init__()
+        self._type = "ability"
+        self.damage = 5
+        self.speed = 10
+        self.friction = 0
+        self.lifetime_timer = Timer(1000)
+        self.flip = False
+
+        self.target_enemy = self._get_closest_enemy(player)
+
+        if not self.target_enemy:
             self.kill()
             return
+
+        self.velocity = self._calculate_velocity(player)
+
+        self._setup_animation()
+
+        self.pos = Vector2(player.rect.centerx, player.rect.centery)
+        self.rect = self.image.get_rect(center=(self.pos.x, self.pos.y))
+        self.hitbox = self.rect.inflate(-70 * 2, -70 * 2)
+
+    def _get_closest_enemy(self, player):
+        enemies = list(Enemy.get_group())
+        if not enemies:
+            return None
 
         closest_enemy = None
         min_distance = float('inf')
@@ -27,22 +48,20 @@ class Ability(BaseEntity):
                 min_distance = dist
                 closest_enemy = enemy
 
-        self.target_enemy = closest_enemy
+        return closest_enemy
 
-        super().__init__()
-
+    def _calculate_velocity(self, player):
         direction = self.target_enemy.pos - player.pos
 
         if direction.length() > 0:
-            self.velocity = direction.normalize()
-        else:
-            self.velocity = Vector2(0, 1)
+            return direction.normalize()
+        return Vector2(0, 1)
 
-        arrow_sheet_horizontal = pygame.image.load('data/sprites/arrow.png').convert_alpha()
-
+    def _setup_animation(self):
+        arrow_sheet = pygame.image.load('data/sprites/arrow.png').convert_alpha()
         angle = -self.velocity.as_polar()[1]
 
-        arrow_anim = Animation(arrow_sheet_horizontal, 100, 100, scale=2, duration=100, loop=True)
+        arrow_anim = Animation(arrow_sheet, 100, 100, scale=2, duration=100, loop=True)
 
         for i in range(len(arrow_anim.frames)):
             arrow_anim.frames[i] = pygame.transform.rotate(arrow_anim.frames[i], angle)
@@ -50,27 +69,8 @@ class Ability(BaseEntity):
         self.animations = {
             "arrow": arrow_anim
         }
-
         self.current_state = "arrow"
         self.image = self.animations[self.current_state].get_current_frame()
-
-        spawn_x = player.hitbox.centerx
-        spawn_y = player.hitbox.centery
-
-        self.rect = self.image.get_rect(center=(spawn_x, spawn_y))
-        self.flip = False
-
-        self._type = "ability"
-
-        self.hitbox = self.rect.inflate(-70 * 2, -70 * 2)
-
-        self.damage = 5
-
-        self.pos = Vector2(self.rect.centerx, self.rect.centery)
-        self.speed = 10
-        self.friction = 0
-
-        self.lifetime_timer = Timer(1000)
 
     def deal_damage(self):
         enemy_group = Enemy.get_group()

@@ -1,15 +1,21 @@
+from random import randint
+
 import pygame
 from pygame.math import Vector2
 
 from entities.experience_coin.experience_coin import ExperienceCoin
+from utils import scaler
 from utils.animation import Animation
 from entities.base.base_entity import BaseEntity
 
 
 class Player(BaseEntity):
     def __init__(self):
+        self._type = "player"
+
         super().__init__()
 
+    def _setup_animations(self):
         idle_sheet = pygame.image.load("data/sprites/player_idle.png").convert_alpha()
         walk_sheet = pygame.image.load("data/sprites/player_walk.png").convert_alpha()
 
@@ -22,11 +28,14 @@ class Player(BaseEntity):
         self.image = self.animations[self.current_state].get_current_frame()
         self.rect = self.image.get_rect()
         self.flip = False
-        self._type = "player"
 
+    def _setup_stats(self):
+        super()._setup_stats()
         self.hp = 5
         self.invincibility_duration = 1000
 
+    def _setup_physics(self):
+        super()._setup_physics()
         self.pos = Vector2(self.rect.x, self.rect.y)
         self.speed = 0.8
 

@@ -12,8 +12,14 @@ from utils import scaler
 
 class Enemy(BaseEntity):
     def __init__(self, player: Player, arena_manager):
+        self._type = "enemy"
+        self.player = player
+        self.arena_manager = arena_manager
+        self.difficulty = self.arena_manager.difficulty
+
         super().__init__()
 
+    def _setup_animations(self):
         walk_sheet = pygame.image.load("data/sprites/enemy_walk.png").convert_alpha()
 
         self.animations = {
@@ -22,46 +28,35 @@ class Enemy(BaseEntity):
 
         self.current_state = "walk"
         self.image = self.animations[self.current_state].get_current_frame()
-        self.rect = self.image.get_rect(midbottom=(randint(0, scaler.Scaler.scaled_x(1280)), randint(0, scaler.Scaler.scaled_x(720))))
         self.flip = False
-
-        self._type = "enemy"
-        self.player = player
-
-        self.arena_manager = arena_manager
-        self.difficulty = self.arena_manager.difficulty
 
         min_radius = 700
         max_radius = 1200
+        spawn_pos = Vector2(self.player.pos.x, self.player.pos.y)
 
-        spawn_pos = Vector2(0, 0)
-        valid_spawn = False
         for i in range(50):
             angle = uniform(0, 360)
             distance = randint(min_radius, max_radius)
-
             offset = Vector2(distance, 0).rotate(angle)
-
             target_pos = self.player.pos + offset
 
             if self.world.get_tile_at(target_pos.x, target_pos.y) != 0:
                 spawn_pos = target_pos
-                valid_spawn = True
                 break
 
-        if not valid_spawn:
-            spawn_pos = Vector2(self.player.pos.x, self.player.pos.y)
-
         self.rect = self.image.get_rect(center=(spawn_pos.x, spawn_pos.y))
-        self.pos = spawn_pos
 
+    def _setup_stats(self):
+        super()._setup_stats()
         self.hp = 10 * self.difficulty
         self.damage = 1
 
+    def _setup_physics(self):
+        super()._setup_physics()
+        self.pos = Vector2(self.rect.centerx, self.rect.centery)
         self.speed = 0.25 * self.difficulty
-
-        self.repulsion_strength = 1  # Сила отталкивания
-        self.personal_space = 20  # Расстояние, ближе которого врагам тесно
+        self.repulsion_strength = 1
+        self.personal_space = 20
 
     def update_difficulty(self):
         new_difficulty = self.arena_manager.difficulty
@@ -128,4 +123,4 @@ class Enemy(BaseEntity):
         self.deal_damage()
 
         if self.hp <= 0:
-            super().kill()
+            self.kill()

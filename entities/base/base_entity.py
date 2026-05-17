@@ -22,31 +22,35 @@ class BaseEntity(ABC, pygame.sprite.Sprite):
         ABC.__init__(self)
         pygame.sprite.Sprite.__init__(self, type(self).group, BaseEntity.container)
 
-        idle_sheet = pygame.image.load("data/sprites/player_idle.png").convert_alpha()
+        self._type = "none"
+        self.id = BaseEntity.generate_new_id()
 
+        self._setup_animations()
+        self._setup_physics()
+        self._setup_stats()
+
+    def _setup_animations(self):
+        idle_sheet = pygame.image.load("data/sprites/player_idle.png").convert_alpha()
         self.animations = {
             "idle": Animation(idle_sheet, 100, 100, scale=2, duration=75, loop=True)
         }
-
         self.current_state = "idle"
         self.image = self.animations[self.current_state].get_current_frame()
-        self.rect = self.image.get_rect(midbottom = (randint(0, 1280), randint(0, 720)))
+        self.rect = self.image.get_rect(midbottom=(randint(0, 1280), randint(0, 720)))
 
+    def _setup_physics(self):
         self.pos = Vector2(self.rect.centerx, self.rect.centery)
         self.velocity = Vector2(0, 0)
         self.speed = 1
         self.friction = 0.15
 
-        self._type = "none"
-
+    def _setup_stats(self):
         self.hitbox = self.rect.inflate(-80 * 2, -80 * 2)
         self.hitbox.bottom = self.rect.bottom
         self.hp = 1
         self.damage = 0
         self.last_hit_time = 0
         self.invincibility_duration = 500
-
-        self.id = BaseEntity.generate_new_id()
 
 
     @property
