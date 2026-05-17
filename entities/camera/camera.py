@@ -1,5 +1,7 @@
 import pygame
 
+from entities.base.base_entity import BaseEntity
+
 class Camera(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
@@ -8,7 +10,7 @@ class Camera(pygame.sprite.Group):
         self.half_height = self.display_surface.get_size()[1] // 2
 
         self.offset = pygame.math.Vector2()
-        self.smoothing = 0.05
+        self.smoothing = 1
         self.target = None
 
     def set_target_camera(self, target):
@@ -25,12 +27,21 @@ class Camera(pygame.sprite.Group):
             self.offset.x += (target_x - self.offset.x) * self.smoothing
             self.offset.y += (target_y - self.offset.y) * self.smoothing
 
-    def draw(self, sprite):
+    def draw(self):
         self.center_target_camera()
 
-        for sprite in sprite:
+        for sprite in BaseEntity.container:
             offset_pos = (
                 int(sprite.rect.left - self.offset.x),
                 int(sprite.rect.top - self.offset.y)
             )
             self.display_surface.blit(sprite.image, offset_pos)
+
+    @property
+    def position(self):
+        return (self.offset.x, self.offset.y)
+
+    @property
+    def view_rect(self):
+        size = self.display_surface.get_size()
+        return pygame.Rect(self.offset.x, self.offset.y, size[0], size[1])
