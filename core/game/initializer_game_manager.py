@@ -1,4 +1,5 @@
 from abc import ABC
+from xml.dom.minidom import Entity
 
 import pygame
 
@@ -14,7 +15,7 @@ class Initializer(ABC):
 
         self._init_settings_manager()
         self._init_pygame()
-        self._init_pygame_gui()
+        self._init_ui_manager()
         self._init_events()
         self._init_scene()
 
@@ -30,7 +31,7 @@ class Initializer(ABC):
     def _init_settings_manager(self):
         self.settings_manager = SettingsManager()
 
-    def _init_pygame_gui(self):
+    def _init_ui_manager(self):
         self.ui_manager = UIManager(self)
 
 
