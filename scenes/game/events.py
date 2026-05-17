@@ -1,6 +1,7 @@
 import pygame
 
 from core.events.base_events import BaseEvents
+from entities.ability.ability import Ability
 from scenes.game.game import Game
 
 class PlayerControlsEvents(BaseEvents):
@@ -12,5 +13,5 @@ class PlayerControlsEvents(BaseEvents):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_z:
                 print("Активация способности через EventsManager!")
-                self.ability_manager.
+                self.ability_manager.use_abilities(Ability.type)
 

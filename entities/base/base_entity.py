@@ -3,7 +3,7 @@ import pygame
 from pygame.math import Vector2
 from random import randint
 
-from entities.animation_component.animation import Animation
+from utils.animation import Animation
 from entities.world.world import World
 
 

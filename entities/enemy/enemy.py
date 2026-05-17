@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, uniform
 
 import pygame
 
@@ -31,10 +31,33 @@ class Enemy(BaseEntity):
         self.arena_manager = arena_manager
         self.difficulty = self.arena_manager.difficulty
 
+        min_radius = 700
+        max_radius = 1200
+
+        spawn_pos = Vector2(0, 0)
+        valid_spawn = False
+        for i in range(50):
+            angle = uniform(0, 360)
+            distance = randint(min_radius, max_radius)
+
+            offset = Vector2(distance, 0).rotate(angle)
+
+            target_pos = self.player.pos + offset
+
+            if self.world.get_tile_at(target_pos.x, target_pos.y) != 0:
+                spawn_pos = target_pos
+                valid_spawn = True
+                break
+
+        if not valid_spawn:
+            spawn_pos = Vector2(self.player.pos.x, self.player.pos.y)
+
+        self.rect = self.image.get_rect(center=(spawn_pos.x, spawn_pos.y))
+        self.pos = spawn_pos
+
         self.hp = 10 * self.difficulty
         self.damage = 1
 
-        self.pos = Vector2(self.rect.x, self.rect.y)
         self.speed = 0.25 * self.difficulty
 
         self.repulsion_strength = 1  # Сила отталкивания
@@ -100,9 +123,9 @@ class Enemy(BaseEntity):
 
         self.update_difficulty()
 
-        self.move()
+        super().move()
         self.animate()
         self.deal_damage()
 
         if self.hp <= 0:
-            self.kill()
+            super().kill()

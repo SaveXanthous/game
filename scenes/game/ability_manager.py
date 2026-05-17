@@ -29,4 +29,3 @@ class AbilityManager:
 
     def update(self):
         pass
-
