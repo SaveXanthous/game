@@ -34,6 +34,10 @@ class Player(BaseEntity):
         self.hp = 5
         self.invincibility_duration = 1000
 
+        self.level = 1
+        self.xp = 0
+        self.max_xp = 1
+
     def _setup_physics(self):
         super()._setup_physics()
         self.pos = Vector2(self.rect.x, self.rect.y)
@@ -80,20 +84,31 @@ class Player(BaseEntity):
 
         self.velocity += acceleration
 
-    def pick_coin(self):
-        coins_group = ExperienceCoin.get_group()
+    def collect_coins(self):
+        coins = list(ExperienceCoin.group)
 
-        for coin in coins_group:
+        for coin in coins:
             if self.hitbox.colliderect(coin.hitbox):
-                # self.gain_xp(coin.xp_value)
+                self.xp += coin.xp_value
                 coin.kill()
+                self.check_level_up()
+
+    def check_level_up(self):
+        if self.xp >= self.max_xp:
+            self.xp -= self.max_xp
+            self.level += 1
+
+            self.max_xp = int(self.max_xp * 1.5)
+            if hasattr(self, 'scene') and hasattr(self.scene, 'upgrade_menu'):
+                self.scene.upgrade_menu.show()
+
 
     def update(self):
         self.player_input()
         super().move()
         self.animate()
 
-        self.pick_coin()
+        self.collect_coins()
 
         if self.hp <= 0:
             self.kill()

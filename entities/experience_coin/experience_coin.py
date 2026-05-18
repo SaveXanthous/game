@@ -44,5 +44,18 @@ class ExperienceCoin(BaseEntity):
     def set_state(self, new_state):
         pass
 
+    def pull_to_player(self):
+        magnet_radius = 150
+        dist = self.pos.distance_to(self.player.pos)
+
+        if dist < magnet_radius:
+            direction = self.player.pos - self.pos
+            if direction.length() > 0:
+                self.pos += direction.normalize() * 8
+
+                self.rect.center = (int(self.pos.x), int(self.pos.y))
+                self.hitbox.center = self.rect.center
+
     def update(self):
         self.animate()
+        self.pull_to_player()

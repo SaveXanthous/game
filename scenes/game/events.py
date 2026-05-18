@@ -9,8 +9,15 @@ class PlayerControlsEvents(BaseEvents):
         self.ability_manager = ability_manager
 
     def process(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if getattr(self.scene, 'is_paused', False):
+                if self.scene.upgrade_menu.handle_click(event.pos):
+                    return
+
+        if getattr(self.scene, 'is_paused', False):
+            return
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_z:
-                print("Активация способности через EventsManager!")
                 self.ability_manager.use_abilities("ability")
 

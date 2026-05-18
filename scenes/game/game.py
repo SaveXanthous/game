@@ -10,6 +10,7 @@ from entities.world.world import World
 from scenes.game.ability_manager import AbilityManager
 from scenes.game.arena_manager import ArenaManager
 from scenes.game.events import PlayerControlsEvents
+from scenes.game.upgrade_manager import UpgradeMenu
 
 
 class Game(BaseScene):
@@ -46,12 +47,24 @@ class Game(BaseScene):
 
         self.ability_manager.update_ability_types("ability", 1000)
 
+        self.is_paused = False
+        self.player.scene = self
+
+        self.upgrade_menu = UpgradeMenu(self)
+
 
     def update(self):
-        self.arena_manager.update()
-        BaseEntity.container.update()
+        if not getattr(self, 'is_paused', False):
+            self.arena_manager.update()
+            BaseEntity.container.update()
+            pass
+
+
+
 
 
     def draw(self):
         self.world.render(self.game_manager.screen, self.camera.offset.x, self.camera.offset.y)
         self.camera.draw()
+        if getattr(self, 'is_paused', False):
+            self.upgrade_menu.draw(self.game_manager.screen)
