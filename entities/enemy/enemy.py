@@ -105,7 +105,7 @@ class Enemy(BaseEntity):
         self.velocity += repulsion * self.repulsion_strength
 
     def kill(self):
-        drop_chance = 100
+        drop_chance = 60
 
         if randint(1, 100) <= drop_chance:
             ExperienceCoin(self.pos, self.player)

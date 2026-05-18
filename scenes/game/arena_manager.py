@@ -9,7 +9,7 @@ class ArenaManager:
 
     def __init__(self, player):
         self.difficulty = 1.0
-        self.difficulty_timer = Timer(10000)
+        self.difficulty_timer = Timer(15000)
 
         self.player = player
 

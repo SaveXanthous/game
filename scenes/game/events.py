@@ -19,5 +19,5 @@ class PlayerControlsEvents(BaseEvents):
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_z:
-                self.ability_manager.use_abilities("ability")
+                self.ability_manager.use_abilities("arrow")
 

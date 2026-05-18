@@ -36,7 +36,7 @@ class Player(BaseEntity):
 
         self.level = 1
         self.xp = 0
-        self.max_xp = 1
+        self.max_xp = 5
 
     def _setup_physics(self):
         super()._setup_physics()

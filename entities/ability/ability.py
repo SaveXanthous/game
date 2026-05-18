@@ -10,12 +10,12 @@ from utils.timer import Timer
 
 
 class Ability(BaseEntity):
-    def __init__(self, player):
+    def __init__(self, player, ability_manager, index=0):
         super().__init__()
 
         self._type = "ability"
-        self.damage = 5
-        self.speed = 10
+        self.damage = 5 * (1 + (0.25 * ability_manager.acquired_upgrades.get("arrow_dmg", 0)))
+        self.speed = 10 * (1 + (0.25 * ability_manager.acquired_upgrades.get("arrow_spd", 0)))
         self.friction = 0
         self.lifetime_timer = Timer(1000)
         self.flip = False
@@ -26,6 +26,7 @@ class Ability(BaseEntity):
             self.kill()
             return
 
+        self.index = index
         self.velocity = self._calculate_velocity(player)
 
         self._setup_animation()
@@ -52,9 +53,16 @@ class Ability(BaseEntity):
 
     def _calculate_velocity(self, player):
         direction = self.target_enemy.pos - player.pos
-
         if direction.length() > 0:
-            return direction.normalize()
+            direction = direction.normalize()
+
+            if self.index % 2 != 0:
+                spread_angle = 15 * ((self.index + 1) // 2)
+            else:
+                spread_angle = -15 * (self.index // 2)
+
+            direction = direction.rotate(spread_angle)
+            return direction
         return Vector2(0, 1)
 
     def _setup_animation(self):

@@ -10,7 +10,7 @@ from entities.world.world import World
 from scenes.game.ability_manager import AbilityManager
 from scenes.game.arena_manager import ArenaManager
 from scenes.game.events import PlayerControlsEvents
-from scenes.game.upgrade_manager import UpgradeMenu
+from scenes.game.upgrade_menu import UpgradeMenu
 
 
 class Game(BaseScene):
@@ -45,7 +45,7 @@ class Game(BaseScene):
 
         self.arena_manager.update_enemy_types("enemy", 2000)
 
-        self.ability_manager.update_ability_types("ability", 1000)
+        self.ability_manager.update_ability_types("arrow", 1000)
 
         self.is_paused = False
         self.player.scene = self
@@ -58,9 +58,6 @@ class Game(BaseScene):
             self.arena_manager.update()
             BaseEntity.container.update()
             pass
-
-
-
 
 
     def draw(self):
