@@ -17,6 +17,8 @@ class ArenaManager:
 
     def update_enemy_types(self, new_type, duration):
         self.enemy_types.update({new_type: Timer(duration * (2 - self.difficulty))})
+        if new_type == "enemy":
+            Enemy(self.player, self)
 
     def spawn_enemies(self):
         for enemy_class, timer in self.enemy_types.items():
