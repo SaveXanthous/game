@@ -38,6 +38,8 @@ class Player(BaseEntity):
         self.xp = 0
         self.max_xp = 5
 
+        self.score = 0
+
     def _setup_physics(self):
         super()._setup_physics()
         self.pos = Vector2(self.rect.x, self.rect.y)
@@ -90,6 +92,7 @@ class Player(BaseEntity):
         for coin in coins:
             if self.hitbox.colliderect(coin.hitbox):
                 self.xp += coin.xp_value
+                self.score += 10
                 coin.kill()
                 self.check_level_up()
 
@@ -97,6 +100,7 @@ class Player(BaseEntity):
         if self.xp >= self.max_xp:
             self.xp -= self.max_xp
             self.level += 1
+            self.score += 100
 
             self.max_xp = int(self.max_xp * 1.5)
             if hasattr(self, 'scene') and hasattr(self.scene, 'upgrade_menu'):

@@ -11,6 +11,7 @@ from scenes.game.ability_manager import AbilityManager
 from scenes.game.arena_manager import ArenaManager
 from scenes.game.events import PlayerControlsEvents
 from scenes.game.upgrade_menu import UpgradeMenu
+from scenes.over.game_over import GameOver
 from ui.elements.ui_progress_bar import ProgressBar
 
 
@@ -84,6 +85,12 @@ class Game(BaseScene):
             self.arena_manager.update()
             BaseEntity.container.update()
             pass
+
+        if self.player.hp <= 0:
+            self.game_manager.last_score = self.player.score
+
+            self.game_manager.events_manager.remove_events(self.player_events)
+            self.next_scene(GameOver)
 
 
     def draw(self):
