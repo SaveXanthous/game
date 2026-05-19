@@ -32,6 +32,7 @@ class Player(BaseEntity):
     def _setup_stats(self):
         super()._setup_stats()
         self.hp = 5
+        self.max_hp = 5
         self.invincibility_duration = 1000
 
         self.level = 1
