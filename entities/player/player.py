@@ -45,6 +45,8 @@ class Player(BaseEntity):
         self.pos = Vector2(self.rect.x, self.rect.y)
         self.speed = 0.8
 
+        self.input_acceleration = Vector2(0, 0)
+
     def set_state(self, new_state):
         if self.current_state != new_state:
             self.current_state = new_state
@@ -66,25 +68,6 @@ class Player(BaseEntity):
         raw_image = current_animation.get_current_frame()
         self.image = pygame.transform.flip(raw_image, self.flip, False)
 
-
-    def player_input(self):
-        keys = pygame.key.get_pressed()
-        acceleration = Vector2(0, 0)
-        if keys[pygame.K_LEFT]: acceleration.x = -1
-        if keys[pygame.K_RIGHT]: acceleration.x = 1
-        if keys[pygame.K_UP]: acceleration.y = -1
-        if keys[pygame.K_DOWN]: acceleration.y = 1
-
-        if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]:
-            acceleration.x = 0
-
-        if keys[pygame.K_UP] and keys[pygame.K_DOWN]:
-            acceleration.y = 0
-
-        if acceleration.length() != 0:
-            acceleration.normalize()
-
-        self.velocity += acceleration
 
     def collect_coins(self):
         coins = list(ExperienceCoin.group)
@@ -108,7 +91,7 @@ class Player(BaseEntity):
 
 
     def update(self):
-        self.player_input()
+        self.velocity += self.input_acceleration
         super().move()
         self.animate()
 
