@@ -1,7 +1,6 @@
 import pygame
 
 from core.events.base_events import BaseEvents
-from entities.ability.ability import Ability
 
 class PlayerControlsEvents(BaseEvents):
     def __init__(self, game_manager, scene, ability_manager):
@@ -9,12 +8,9 @@ class PlayerControlsEvents(BaseEvents):
         self.ability_manager = ability_manager
 
     def process(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if getattr(self.scene, 'is_paused', False):
-                if self.scene.upgrade_menu.handle_click(event.pos):
-                    return
-
         if getattr(self.scene, 'is_paused', False):
+            if hasattr(self.scene, 'upgrade_menu') and self.scene.upgrade_menu.active:
+                self.scene.upgrade_menu.handle_event(event)
             return
 
         if event.type == pygame.KEYDOWN:
