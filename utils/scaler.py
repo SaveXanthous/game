@@ -1,13 +1,17 @@
+import math
+
 class Scaler:
     width_ratio = 1.0
     height_ratio = 1.0
     font_ratio = 1.0
+    radius_ratio = 1.0
 
     @classmethod
     def set_scale(cls, current_w, current_h):
         cls.width_ratio = current_w / 1280
         cls.height_ratio = current_h / 720
         cls.font_ratio = min(cls.width_ratio, cls.height_ratio)
+        cls.radius_ratio = math.sqrt(cls.width_ratio**2 + cls.height_ratio**2) / math.sqrt(2)
 
     @classmethod
     def scaled_width(cls, value):
@@ -34,3 +38,8 @@ class Scaler:
         value = int(value)
         value = int(value * cls.font_ratio)
         return str(value)
+
+    @classmethod
+    def scaled_radius(cls, value):
+        value = int(value * cls.radius_ratio)
+        return value

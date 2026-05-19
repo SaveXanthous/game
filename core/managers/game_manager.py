@@ -9,14 +9,12 @@ class GameManager(Initializer):
 
             self.process_events()
 
-            self.ui_manager.manager.update(self.time_delta)
-
             self.screen.fill((20, 20, 30))
 
             self.scenes_manager.update()
             self.scenes_manager.draw()
 
-            self.ui_manager.manager.draw_ui(self.screen)
+            self.ui_manager.draw()
 
             pygame.display.update()
 
@@ -28,7 +26,5 @@ class GameManager(Initializer):
 
     def process_events(self):
         for system_event in pygame.event.get():
-            self.ui_manager.manager.process_events(system_event)
-
             for handler_event in self.events_manager.events:
                 handler_event.process(system_event)
