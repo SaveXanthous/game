@@ -16,12 +16,12 @@ class PlayerControlsEvents(BaseEvents):
             pygame.K_DOWN: False
         }
 
+
     def process(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if getattr(self.scene, 'is_paused', False):
-                if self.scene.upgrade_menu.handle_click(event.pos):
-                    self._resync_keys()
-                    return
+        if getattr(self.scene, 'is_paused', False):
+            if hasattr(self.scene, 'upgrade_menu') and self.scene.upgrade_menu.active:
+                self.scene.upgrade_menu.handle_event(event)
+            return
 
         if getattr(self.scene, 'is_paused', False):
             if event.type == pygame.KEYUP and event.key in self.movement_keys:
