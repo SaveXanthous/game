@@ -104,8 +104,7 @@ class Enemy(BaseEntity):
 
         self.velocity += repulsion * self.repulsion_strength
 
-    def kill(self):
-
+    def kill_low_hp(self):
         self.player.score += 50
 
         drop_chance = 60
@@ -113,7 +112,7 @@ class Enemy(BaseEntity):
         if randint(1, 100) <= drop_chance:
             ExperienceCoin(self.pos, self.player)
 
-        super().kill()
+        self.kill()
 
     def update(self):
         self.player_direction()
@@ -126,4 +125,4 @@ class Enemy(BaseEntity):
         self.deal_damage()
 
         if self.hp <= 0:
-            self.kill()
+            self.kill_low_hp()
