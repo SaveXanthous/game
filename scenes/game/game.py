@@ -29,8 +29,9 @@ class Game(BaseScene):
 
         BaseEntity.world = self.world
 
-        spawn_x = (world.map_size[0] * world.tile_size) // 2
-        spawn_y = (world.map_size[1] * world.tile_size) // 2
+        spawn_grid_x, spawn_grid_y = world.spawn_point
+        spawn_x = spawn_grid_x * world.tile_size + (world.tile_size // 2)
+        spawn_y = spawn_grid_y * world.tile_size + (world.tile_size // 2)
 
         self.player = Player()
         self.player.pos = (spawn_x, spawn_y)
