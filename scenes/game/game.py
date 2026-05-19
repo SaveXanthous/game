@@ -1,13 +1,17 @@
 from entities.ability.ability import Ability
 from entities.player import player
 from events.default_events import DefaultEvents
-from managers.arena_manager import ArenaManager
 from scenes.base.base_scene import BaseScene
 from entities.player.player import Player
 from entities.enemy.enemy import Enemy
 from entities.base.base_entity import BaseEntity
 from entities.camera.camera import Camera
 from entities.world.world import World
+from scenes.game.ability_manager import AbilityManager
+from scenes.game.arena_manager import ArenaManager
+from scenes.game.events import PlayerControlsEvents
+from scenes.game.upgrade_menu import UpgradeMenu
+
 
 class Game(BaseScene):
     def __init__(self, game_manager):
@@ -32,21 +36,32 @@ class Game(BaseScene):
 
         # ------------------------------------------------------------------
 
-        self.arena_manager = ArenaManager(self.player, self.game_manager)
+        self.arena_manager = ArenaManager(self.player)
 
-        base_interval = 2000
-        adjusted_interval = base_interval / self.game_manager.difficulty
+        self.ability_manager = AbilityManager(self.player)
 
-        self.arena_manager.update_enemy_types(Enemy.type, adjusted_interval)
+        self.player_events = PlayerControlsEvents(self.game_manager, self, self.ability_manager)
+        self.game_manager.events_manager.add_events(self.player_events)
 
-        self.arena_manager.update_ability_types(Ability.type, 1000)
+        self.arena_manager.update_enemy_types("enemy", 2000)
+
+        self.ability_manager.update_ability_types("arrow", 1000)
+
+        self.is_paused = False
+        self.player.scene = self
+
+        self.upgrade_menu = UpgradeMenu(self)
 
 
     def update(self):
-        self.arena_manager.update()
-        BaseEntity.container.update()
+        if not getattr(self, 'is_paused', False):
+            self.arena_manager.update()
+            BaseEntity.container.update()
+            pass
 
 
     def draw(self):
         self.world.render(self.game_manager.screen, self.camera.offset.x, self.camera.offset.y)
         self.camera.draw()
+        if getattr(self, 'is_paused', False):
+            self.upgrade_menu.draw(self.game_manager.screen)

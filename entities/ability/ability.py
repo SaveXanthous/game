@@ -1,55 +1,84 @@
-from random import randint, choice
+from random import choice
 
 import pygame
 from pygame.math import Vector2
 
-from entities.animation_component.animation import Animation
+from utils.animation import Animation
 from entities.base.base_entity import BaseEntity
 from entities.enemy.enemy import Enemy
+from utils.timer import Timer
 
 
 class Ability(BaseEntity):
-    def __init__(self):
-        enemies = list(Enemy.get_group())
+    def __init__(self, player, ability_manager, index=0):
+        super().__init__()
 
-        if not enemies:
-            super().__init__()
+        self._type = "ability"
+        self.damage = 5 * (1 + (0.25 * ability_manager.acquired_upgrades.get("arrow_dmg", 0)))
+        self.speed = 10 * (1 + (0.25 * ability_manager.acquired_upgrades.get("arrow_spd", 0)))
+        self.friction = 0
+        self.lifetime_timer = Timer(1000)
+        self.flip = False
+
+        self.target_enemy = self._get_closest_enemy(player)
+
+        if not self.target_enemy:
             self.kill()
             return
 
-        self.target_enemy = choice(enemies)
+        self.index = index
+        self.velocity = self._calculate_velocity(player)
 
-        super().__init__()
+        self._setup_animation()
 
-        arrow_sheet_horizontal = pygame.image.load('data/sprites/arrow.png').convert_alpha()
-        arrow_sheet_vertical = pygame.transform.rotate(arrow_sheet_horizontal, -90)
-
-        self.animations = {
-            "arrow": Animation(arrow_sheet_vertical, 100, 100, scale=2, duration=100, loop = True)
-        }
-
-        self.current_state = "arrow"
-        self.image = self.animations[self.current_state].get_current_frame()
-
-        spawn_x = self.target_enemy.hitbox.centerx
-        spawn_y = self.target_enemy.hitbox.top - 5
-
-        self.max_distance = 200
-
-        self.rect = self.image.get_rect(midbottom=(spawn_x, spawn_y))
-        self.flip = False
-
-        self._type = "ability"
-
+        self.pos = Vector2(player.rect.centerx, player.rect.centery)
+        self.rect = self.image.get_rect(center=(self.pos.x, self.pos.y))
         self.hitbox = self.rect.inflate(-70 * 2, -70 * 2)
 
-        self.damage = 5
+    def _get_closest_enemy(self, player):
+        enemies = list(Enemy.get_group())
+        if not enemies:
+            return None
 
-        self.pos = Vector2(self.rect.x, self.rect.y)
-        self.start_pos = self.pos
-        self.velocity = Vector2(0, 1)
-        self.speed = 7.5
-        self.friction = 0
+        closest_enemy = None
+        min_distance = float('inf')
+
+        for enemy in enemies:
+            dist = player.pos.distance_to(enemy.pos)
+            if dist < min_distance:
+                min_distance = dist
+                closest_enemy = enemy
+
+        return closest_enemy
+
+    def _calculate_velocity(self, player):
+        direction = self.target_enemy.pos - player.pos
+        if direction.length() > 0:
+            direction = direction.normalize()
+
+            if self.index % 2 != 0:
+                spread_angle = 15 * ((self.index + 1) // 2)
+            else:
+                spread_angle = -15 * (self.index // 2)
+
+            direction = direction.rotate(spread_angle)
+            return direction
+        return Vector2(0, 1)
+
+    def _setup_animation(self):
+        arrow_sheet = pygame.image.load('data/sprites/arrow.png').convert_alpha()
+        angle = -self.velocity.as_polar()[1]
+
+        arrow_anim = Animation(arrow_sheet, 100, 100, scale=2, duration=100, loop=True)
+
+        for i in range(len(arrow_anim.frames)):
+            arrow_anim.frames[i] = pygame.transform.rotate(arrow_anim.frames[i], angle)
+
+        self.animations = {
+            "arrow": arrow_anim
+        }
+        self.current_state = "arrow"
+        self.image = self.animations[self.current_state].get_current_frame()
 
     def deal_damage(self):
         enemy_group = Enemy.get_group()
@@ -74,5 +103,5 @@ class Ability(BaseEntity):
     def update(self):
         super().move()
         self.deal_damage()
-        if self.pos.distance_to(self.start_pos) > self.max_distance:
+        if self.lifetime_timer.check():
             self.kill()

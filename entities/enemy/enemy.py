@@ -1,20 +1,25 @@
-from random import randint
+from random import randint, uniform
 
 import pygame
 
-import utils.scaler
-from entities.animation_component.animation import Animation
+from entities.experience_coin.experience_coin import ExperienceCoin
+from utils.animation import Animation
 from entities.base.base_entity import BaseEntity
 from entities.player.player import Player
 from pygame.math import Vector2
 
 from utils import scaler
 
-
 class Enemy(BaseEntity):
-    def __init__(self, player: Player, game_manager):
+    def __init__(self, player: Player, arena_manager):
+        self._type = "enemy"
+        self.player = player
+        self.arena_manager = arena_manager
+        self.difficulty = self.arena_manager.difficulty
+
         super().__init__()
 
+    def _setup_animations(self):
         walk_sheet = pygame.image.load("data/sprites/enemy_walk.png").convert_alpha()
 
         self.animations = {
@@ -23,26 +28,38 @@ class Enemy(BaseEntity):
 
         self.current_state = "walk"
         self.image = self.animations[self.current_state].get_current_frame()
-        self.rect = self.image.get_rect(midbottom=(randint(0, scaler.Scaler.scaled_x(1280)), randint(0, scaler.Scaler.scaled_x(720))))
         self.flip = False
 
-        self._type = "enemy"
-        self.player = player
+        min_radius = 700
+        max_radius = 1200
+        spawn_pos = Vector2(self.player.pos.x, self.player.pos.y)
 
-        self.game_manager = game_manager
-        self.difficulty = self.game_manager.difficulty
+        for i in range(50):
+            angle = uniform(0, 360)
+            distance = randint(min_radius, max_radius)
+            offset = Vector2(distance, 0).rotate(angle)
+            target_pos = self.player.pos + offset
 
+            if self.world.get_tile_at(target_pos.x, target_pos.y) != 0:
+                spawn_pos = target_pos
+                break
+
+        self.rect = self.image.get_rect(center=(spawn_pos.x, spawn_pos.y))
+
+    def _setup_stats(self):
+        super()._setup_stats()
         self.hp = 10 * self.difficulty
         self.damage = 1
 
-        self.pos = Vector2(self.rect.x, self.rect.y)
+    def _setup_physics(self):
+        super()._setup_physics()
+        self.pos = Vector2(self.rect.centerx, self.rect.centery)
         self.speed = 0.25 * self.difficulty
-
-        self.repulsion_strength = 1  # Сила отталкивания
-        self.personal_space = 20  # Расстояние, ближе которого врагам тесно
+        self.repulsion_strength = 1
+        self.personal_space = 20
 
     def update_difficulty(self):
-        new_difficulty = self.game_manager.difficulty
+        new_difficulty = self.arena_manager.difficulty
         if new_difficulty > self.difficulty:
             self.difficulty = new_difficulty
             self.speed *= self.difficulty
@@ -86,6 +103,14 @@ class Enemy(BaseEntity):
                     repulsion += diff.normalize() * (self.personal_space / distance)
 
         self.velocity += repulsion * self.repulsion_strength
+
+    def kill(self):
+        drop_chance = 60
+
+        if randint(1, 100) <= drop_chance:
+            ExperienceCoin(self.pos, self.player)
+
+        super().kill()
 
     def update(self):
         self.player_direction()
