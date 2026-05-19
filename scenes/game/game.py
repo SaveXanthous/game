@@ -11,13 +11,17 @@ from scenes.game.ability_manager import AbilityManager
 from scenes.game.arena_manager import ArenaManager
 from scenes.game.events import PlayerControlsEvents
 from scenes.game.upgrade_menu import UpgradeMenu
+from ui.elements.ui_progress_bar import ProgressBar
 
 
 class Game(BaseScene):
     def __init__(self, game_manager):
         super().__init__(game_manager)
 
-        world = World()
+
+        map_size = (70, 70)
+        tile_size = 64
+        world = World(map_size=map_size,tile_size=tile_size)
 
         self.world = world
         self.world.generate_new_world()
@@ -32,7 +36,26 @@ class Game(BaseScene):
 
 
         self.camera = Camera()
-        self.camera.set_target_camera(self.player)
+        min_rad = min(map_size[0], map_size[1]) * tile_size
+        max_rad = max(map_size[0], map_size[1]) * tile_size
+        self.camera.spawn_cinematic(self.player, min_rad ,max_rad)
+
+        self.is_freeze = False
+
+        self.my_bar = ProgressBar(
+        "hp_bar",
+            x=+200, y=-300,
+            w=400, h=50,
+            base_image_path="data/ui/bar/BigBar_Base.png",
+            fill_image_path="data/ui/bar/BigBar_Fill.png",
+            text="",
+            progress=1.0,
+            offset_x = 11, offset_y = 0,
+            offset_w = 11, offset_h = 0
+        )
+
+        self.value = 1.0
+
 
         # ------------------------------------------------------------------
 
@@ -52,9 +75,12 @@ class Game(BaseScene):
 
         self.upgrade_menu = UpgradeMenu(self)
 
+        self.arena_manager.update()
+        BaseEntity.container.update()
+
 
     def update(self):
-        if not getattr(self, 'is_paused', False):
+        if not getattr(self, 'is_paused', False) and self.camera.is_cinematic_finished:
             self.arena_manager.update()
             BaseEntity.container.update()
             pass
