@@ -34,13 +34,29 @@ class Enemy(BaseEntity):
         max_radius = 1200
         spawn_pos = Vector2(self.player.pos.x, self.player.pos.y)
 
+        safe_margin = 80
+
         for i in range(50):
             angle = uniform(0, 360)
             distance = randint(min_radius, max_radius)
             offset = Vector2(distance, 0).rotate(angle)
             target_pos = self.player.pos + offset
 
-            if self.world.get_tile_at(target_pos.x, target_pos.y) != 0:
+            points_to_check = [
+                (target_pos.x, target_pos.y),
+                (target_pos.x - safe_margin, target_pos.y - safe_margin),
+                (target_pos.x + safe_margin, target_pos.y - safe_margin),
+                (target_pos.x - safe_margin, target_pos.y + safe_margin),
+                (target_pos.x + safe_margin, target_pos.y + safe_margin)
+            ]
+
+            is_safe = True
+            for px, py in points_to_check:
+                if self.world.get_tile_at(px, py) == 0:
+                    is_safe = False
+                    break
+
+            if is_safe:
                 spawn_pos = target_pos
                 break
 
