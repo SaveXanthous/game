@@ -105,6 +105,9 @@ class Enemy(BaseEntity):
         self.velocity += repulsion * self.repulsion_strength
 
     def kill(self):
+
+        self.player.score += 50
+
         drop_chance = 60
 
         if randint(1, 100) <= drop_chance:
