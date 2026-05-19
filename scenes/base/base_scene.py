@@ -1,9 +1,6 @@
 from abc import abstractmethod, ABC
 
-from i18n.translations import container
-
 from game.game_handle import GameHandle
-from ui.ui_scaler import UIScaler
 
 from utils.json_handler import JSONHandler
 
@@ -23,11 +20,6 @@ class BaseScene(ABC, GameHandle):
     def init_ui(self):
         get_path_json = lambda file : JSONHandler.path_join("scenes",  self.name, file)
 
-        path = get_path_json("style_ui.json")
-        self.game_manager.ui_manager.manager.get_theme().load_theme(path)
-
-        path = get_path_json("ui.json")
-        self.game_manager.ui_manager.set_ui_json(path)
 
         self.ui_elements = self.game_manager.ui_manager.ui_elements
 
