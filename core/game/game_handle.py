@@ -8,4 +8,4 @@ class GameHandle:
     
     @game_manager.setter
     def game_manager(self,game_manager):
-        self._game_manager = game_manager
+        id._game_manager = game_manager
