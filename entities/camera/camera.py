@@ -27,40 +27,80 @@ class Camera(pygame.sprite.Group):
             self.offset.x = self.target.rect.centerx - self.half_width
             self.offset.y = self.target.rect.centery - self.half_height
 
-    def spawn_cinematic(self, target, min_radius=400, max_radius=700):
+    def spawn_cinematic(self, target=None, min_radius=400, max_radius=700, mode="ease_out"):
+        """
+        Кинематографичный вылет.
+        mode="ease_out" -> Резкий старт со скоростью, плавное замедление к концу.
+        mode="ease_in"  -> Плавный ленивый старт, резкое ускорение (рывок) к концу.
+        """
         min_radius = Scaler.scaled_radius(min_radius)
         max_radius = Scaler.scaled_radius(max_radius)
 
         self.target = target
-        if not target:
-            return
-
-        ideal_x = self.target.rect.centerx - self.half_width
-        ideal_y = self.target.rect.centery - self.half_height
+        self.cinematic_mode = mode
 
         angle = random.uniform(0, 2 * math.pi)
         radius = random.uniform(min_radius, max_radius)
+        offset_x = radius * math.cos(angle)
+        offset_y = radius * math.sin(angle)
 
-        self.offset.x = ideal_x + radius * math.cos(angle)
-        self.offset.y = ideal_y + radius * math.sin(angle)
+        if target:
+            ideal_x = self.target.rect.centerx - self.half_width
+            ideal_y = self.target.rect.centery - self.half_height
+            self.offset.x = ideal_x + offset_x
+            self.offset.y = ideal_y + offset_y
+        else:
+            self.cinematic_destination = pygame.math.Vector2(
+                self.offset.x + offset_x,
+                self.offset.y + offset_y
+            )
 
         self.is_appearing = True
-        self.current_smoothing = self.spawn_smoothing
+
+        if self.cinematic_mode == "ease_in":
+            self.current_smoothing = 0.005
+        else:
+            self.current_smoothing = 0.06
 
     def center_target_camera(self):
-        if not self.target:
+        if self.target:
+            target_x = self.target.rect.centerx - self.half_width
+            target_y = self.target.rect.centery - self.half_height
+        elif self.is_appearing and hasattr(self, 'cinematic_destination'):
+            target_x = self.cinematic_destination.x
+            target_y = self.cinematic_destination.y
+        else:
             return
 
-        target_x = self.target.rect.centerx - self.half_width
-        target_y = self.target.rect.centery - self.half_height
+        if self.is_appearing:
+            if self.cinematic_mode == "ease_in":
+                self.current_smoothing = min(0.4, self.current_smoothing * 1.09)
+            elif self.cinematic_mode == "ease_out":
+                self.current_smoothing = max(0.015, self.current_smoothing * 0.97)
 
-        self.offset.x += (target_x - self.offset.x) * self.current_smoothing
-        self.offset.y += (target_y - self.offset.y) * self.current_smoothing
+        step_x = (target_x - self.offset.x) * self.current_smoothing
+        step_y = (target_y - self.offset.y) * self.current_smoothing
+
+        if self.is_appearing:
+            step_length_sq = step_x ** 2 + step_y ** 2
+
+            if step_length_sq < 4:
+                dx = target_x - self.offset.x
+                dy = target_y - self.offset.y
+                dist = math.hypot(dx, dy)
+                if dist > 0:
+                    step_x = (dx / dist) * 2
+                    step_y = (dy / dist) * 2
+
+        self.offset.x += step_x
+        self.offset.y += step_y
 
         if self.is_appearing:
             distance_sq = (target_x - self.offset.x) ** 2 + (target_y - self.offset.y) ** 2
 
-            if distance_sq < 4:
+            stop_threshold = 100 if self.cinematic_mode == "ease_in" else 9
+
+            if distance_sq < stop_threshold:
                 self.is_appearing = False
                 self.current_smoothing = self.normal_smoothing
 
