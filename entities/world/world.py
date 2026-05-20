@@ -88,6 +88,8 @@ class World:
                     if found: break
                 if found: break
 
+        self.spawn_point = (cx, cy)
+
         main_island = []
         if grid[cx][cy] == 1:
             queue = [(cx, cy)]

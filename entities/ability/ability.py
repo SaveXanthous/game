@@ -100,6 +100,9 @@ class Ability(BaseEntity):
     def animate(self):
         pass
 
+    def can_move_to(self, new_center):
+        return True
+
     def update(self):
         super().move()
         self.deal_damage()

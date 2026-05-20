@@ -32,6 +32,7 @@ class Player(BaseEntity):
     def _setup_stats(self):
         super()._setup_stats()
         self.hp = 5
+        self.max_hp = 5
         self.invincibility_duration = 1000
 
         self.level = 1
@@ -44,6 +45,8 @@ class Player(BaseEntity):
         super()._setup_physics()
         self.pos = Vector2(self.rect.x, self.rect.y)
         self.speed = 0.8
+
+        self.input_acceleration = Vector2(0, 0)
 
     def set_state(self, new_state):
         if self.current_state != new_state:
@@ -67,25 +70,6 @@ class Player(BaseEntity):
         self.image = pygame.transform.flip(raw_image, self.flip, False)
 
 
-    def player_input(self):
-        keys = pygame.key.get_pressed()
-        acceleration = Vector2(0, 0)
-        if keys[pygame.K_LEFT]: acceleration.x = -1
-        if keys[pygame.K_RIGHT]: acceleration.x = 1
-        if keys[pygame.K_UP]: acceleration.y = -1
-        if keys[pygame.K_DOWN]: acceleration.y = 1
-
-        if keys[pygame.K_LEFT] and keys[pygame.K_RIGHT]:
-            acceleration.x = 0
-
-        if keys[pygame.K_UP] and keys[pygame.K_DOWN]:
-            acceleration.y = 0
-
-        if acceleration.length() != 0:
-            acceleration.normalize()
-
-        self.velocity += acceleration
-
     def collect_coins(self):
         coins = list(ExperienceCoin.group)
 
@@ -108,7 +92,7 @@ class Player(BaseEntity):
 
 
     def update(self):
-        self.player_input()
+        self.velocity += self.input_acceleration
         super().move()
         self.animate()
 

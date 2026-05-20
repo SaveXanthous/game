@@ -2,18 +2,32 @@ import pygame
 import random
 
 from entities.upgrades_list.upgrades_list import UPGRADES_LIST
+from ui.elements.ui_panel import Panel
+from ui.elements.ui_button import Button
+from ui.elements.ui_label import Label
 
 
 class UpgradeMenu:
+    PANEL_IMG = "data/ui/panel/RegularPaper.png"
+    SLOT_BG_IMG = "data/ui/panel/SpecialPaper.png"
+    CARD_NORMAL_IMG = "data/ui/button/BigBlueButton_Regular.png"
+    CARD_PRESSED_IMG = "data/ui/button/BigBlueButton_Pressed.png"
+
+    PANEL_STYLE = "nine_slice"
+    SLOT_STYLE = "nine_slice"
+    CARD_STYLE = "nine_slice"
+
     def __init__(self, scene):
         self.scene = scene
         self.active = False
         self.current_upgrades = []
-        self.cards = []
 
-        pygame.font.init()
-        self.font_title = pygame.font.Font(None, 64)
-        self.font_text = pygame.font.Font(None, 36)
+        self.bg_panel = None
+        self.title_label = None
+
+        self.ui_slot_panels = []
+        self.ui_icons = []
+        self.ui_cards = []
 
     def show(self):
         self.active = True
@@ -24,7 +38,6 @@ class UpgradeMenu:
 
         for upg in UPGRADES_LIST:
             current_level = tracker.get(upg["id"], 0)
-
             if current_level < upg["max_level"]:
                 available_upgrades.append(upg)
 
@@ -37,53 +50,158 @@ class UpgradeMenu:
             self.hide()
             return
 
-        self.cards.clear()
-        screen_w, screen_h = self.scene.game_manager.screen.get_size()
-        card_w, card_h = 250, 350
-        spacing = 50
+        self.ui_slot_panels.clear()
+        self.ui_icons.clear()
+        self.ui_cards.clear()
 
-        total_width = (card_w * sample_size) + (spacing * (sample_size - 1))
-        start_x = (screen_w - total_width) // 2
-        start_y = (screen_h - card_h) // 2
+        panel_w, panel_h = 1050, 600
+        slot_w, slot_h = 300, 440
+        spacing = 30
+
+        self.bg_panel = Panel(
+            "upgrade_bg_panel",
+            x=0, y=900,
+            w=panel_w, h=panel_h,
+            image_path=self.PANEL_IMG,
+            style=self.PANEL_STYLE
+        )
+
+        self.bg_panel.move_by_easing(y=900)
+
+        self.title_label = Label(
+            "upgrade_title",
+            x=0, y=900-250,
+            w=1140, h=90,
+            text="Choose an Upgrade!",
+            font_size=42,
+            font_color=(255, 230, 150),
+            bg_image_path='data/ui/label/BigRibbons.png',
+            show_bg=True,
+            bg_color_index=0
+        )
+
+        self.title_label.move_by_easing(y=900)
+
+        total_slots_w = (slot_w * sample_size) + (spacing * (sample_size - 1))
+        start_offset_x = - (total_slots_w // 2) + (slot_w // 2)
+
+        base_y_offset = 50 + 900
 
         for i, upgrade in enumerate(self.current_upgrades):
-            rect = pygame.Rect(start_x + i * (card_w + spacing), start_y, card_w, card_h)
-            self.cards.append({"rect": rect, "data": upgrade})
+            self.kill()
+
+            slot_x_offset = start_offset_x + i * (slot_w + spacing)
+
+            slot_panel = Panel(
+                f"upgrade_slot_bg_{i}",
+                x=slot_x_offset,
+                y=base_y_offset,
+                w=slot_w,
+                h=slot_h,
+                image_path=self.SLOT_BG_IMG,
+                style=self.SLOT_STYLE
+            )
+            self.ui_slot_panels.append(slot_panel)
+            slot_panel.move_by_easing(y=900)
+
+            icon_path = upgrade.get("image", "data/ui/panel/DefaultIcon.png")
+            icon_panel = Panel(
+                f"upgrade_icon_{i}",
+                x=slot_x_offset,
+                y=base_y_offset + 60,
+                w=300, h=300,
+                image_path=icon_path,
+                style="stretch"
+            )
+            self.ui_icons.append(icon_panel)
+            icon_panel.move_by_easing(y=900)
+
+            def make_action(upg_data=upgrade):
+                self.scene.ability_manager.apply_upgrade(upg_data)
+                self.hide()
+
+            card_button = Button(
+                f"upgrade_card_{i}",
+                x=slot_x_offset,
+                y=base_y_offset - 130,
+                w=260, h=100,
+                normal_image_path=self.CARD_NORMAL_IMG,
+                pressed_image_path=self.CARD_PRESSED_IMG,
+                text=upgrade["description"],
+                text_color=(255, 255, 255),
+                font_size=28,
+                font_name='monospace',
+                action=make_action,
+                style=self.CARD_STYLE
+            )
+            self.ui_cards.append(card_button)
+            card_button.move_by_easing(y=900)
 
     def hide(self):
         self.active = False
         self.scene.is_paused = False
 
-    def draw(self, screen):
-        if not self.active:
-            return
+        self.bg_panel.move_by_easing(y=900)
+        self.title_label.move_by_easing(y=900)
 
-        overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 180))
-        screen.blit(overlay, (0, 0))
+        for slot in self.ui_slot_panels:
+            slot.move_by_easing(y=900)
 
-        title_surf = self.font_title.render("New level!", True, (255, 255, 255))
-        title_rect = title_surf.get_rect(center=(screen.get_width() // 2, 100))
-        screen.blit(title_surf, title_rect)
+        for icon in self.ui_icons:
+            icon.move_by_easing(y=900)
 
-        for card in self.cards:
-            rect = card["rect"]
-            data = card["data"]
+        for card in self.ui_cards:
+            card.move_by_easing(y=900)
 
-            pygame.draw.rect(screen, (50, 50, 60), rect, border_radius=15)
-            pygame.draw.rect(screen, (200, 200, 200), rect, width=3, border_radius=15)
+    def kill(self):
+        try:
+            if self.bg_panel:
+                self.bg_panel.kill()
 
-            text_surf = self.font_text.render(data["description"], True, (255, 255, 255))
-            text_rect = text_surf.get_rect(center=rect.center)
-            screen.blit(text_surf, text_rect)
+            if self.title_label:
+                self.title_label.kill()
 
-    def handle_click(self, mouse_pos):
+            for slot in self.ui_slot_panels:
+                slot.kill()
+
+            for icon in self.ui_icons:
+                icon.kill()
+
+            for card in self.ui_cards:
+                card.kill()
+        except:
+            pass
+
+    def handle_event(self, event):
         if not self.active:
             return False
 
-        for card in self.cards:
-            if card["rect"].collidepoint(mouse_pos):
-                self.scene.ability_manager.apply_upgrade(card["data"])
-                self.hide()
-                return True
-        return False
+        for card in self.ui_cards:
+            card.handle_event(event)
+
+        return True
+
+    def draw(self, screen):
+        is_finished = self.bg_panel.is_finished if self.bg_panel else False
+        if not self.active and is_finished:
+            return
+
+        if self.bg_panel:
+            self.bg_panel.draw(screen)
+            self.bg_panel.update_easing()
+
+        if self.title_label:
+            self.title_label.draw(screen)
+            self.title_label.update_easing()
+
+        for slot in self.ui_slot_panels:
+            slot.draw(screen)
+            slot.update_easing()
+
+        for icon in self.ui_icons:
+            icon.draw(screen)
+            icon.update_easing()
+
+        for card in self.ui_cards:
+            card.draw(screen)
+            card.update_easing()
