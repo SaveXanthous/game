@@ -23,11 +23,11 @@ Welcome to our 2D survival top-down shooter! Inspired by games like Vampire Surv
 
 ## Screenshots
 Main Menu
-![img.png](screenshots/main_menu.png)
+![img.png](screenshots/menu.png)
 Game process
-![img_1.png](screenshots/game_process.png)
+![img_1.png](screenshots/game.png)
 Game over
-![img.png](screenshots/game_over.png)
+![img.png](screenshots/over.png)
 ## Team Member Roles
 * **Nikita Bychkov: Worked on the core gameplay logic, animation and timer classes, collision hitboxes, and setting up the optimized data structures like the upgrades dictionary.
 
